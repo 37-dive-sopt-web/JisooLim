@@ -39,7 +39,7 @@
       <ul class="menu-list">
         <li class="menu-item"><a href="#intro">소개</a></li>
         <li class="menu-item"><a href="#skills">나의 스킬</a></li>
-        <li class="menu-item"><a href="#">나의 모습</a></li>
+        <li class="menu-item"><a href="#looks">나의 모습</a></li>
         <li class="menu-item"><a href="#">사진첩</a></li>
         <li class="menu-item"><a href="#">한마디</a></li>
       </ul>
@@ -82,6 +82,96 @@
           </ul>
         </div>
       </section>
+
+      <!-- 나의 모습 섹션 -->
+      <section id="looks" class="looks-section" aria-labelledby="looks-heading">
+        <div class="looks-header">
+          <h2 id="looks-heading" class="looks-heading">나의 모습</h2>
+        </div>
+        <div class="looks-grid">
+          <article class="look-card">
+            <img src="./images/ninedot.JPG" alt="나인도트" class="look-card-image" />
+            <div class="look-card-body">
+              <div class="look-card-top">
+                <h3 class="look-card-title">나인도트</h3>
+                <button type="button" class="look-card-heart" aria-pressed="false">
+                  <span class="look-card-heart-icon" aria-hidden="true">♥</span>
+                  <span class="visually-hidden">좋아요</span>
+                </button>
+              </div>
+              <p class="look-card-text">제 첫 앱잼팀 나인도트랍니다!</p>
+            </div>
+          </article>
+
+          <article class="look-card">
+            <img src="./images/sweb.JPG" alt="웨비들" class="look-card-image" />
+            <div class="look-card-body">
+              <div class="look-card-top">
+                <h3 class="look-card-title">스웹</h3>
+                <button type="button" class="look-card-heart" aria-pressed="false">
+                  <span class="look-card-heart-icon" aria-hidden="true">♥</span>
+                  <span class="visually-hidden">좋아요</span>
+                </button>
+              </div>
+              <p class="look-card-text">무려 4월에 했던 스웹 번개..</p>
+            </div>
+          </article>
+
+          <article class="look-card">
+            <img src="./images/buddy.JPG" alt="버디버디" class="look-card-image" />
+            <div class="look-card-body">
+              <div class="look-card-top">
+                <h3 class="look-card-title">버디버디</h3>
+                <button type="button" class="look-card-heart" aria-pressed="false">
+                  <span class="look-card-heart-icon" aria-hidden="true">♥</span>
+                  <span class="visually-hidden">좋아요</span>
+                </button>
+              </div>
+              <p class="look-card-text">버디버디랑 한강도 갔어요!</p>
+            </div>
+          </article>
+
+          <article class="look-card">
+            <img src="./images/network.JPG" alt="네트워킹팀" class="look-card-image" />
+            <div class="look-card-body">
+              <div class="look-card-top">
+                <h3 class="look-card-title">네트워킹팀</h3>
+                <button type="button" class="look-card-heart" aria-pressed="false">
+                  <span class="look-card-heart-icon" aria-hidden="true">♥</span>
+                  <span class="visually-hidden">좋아요</span>
+                </button>
+              </div>
+              <p class="look-card-text">네트워킹팀이랑 체육대회도 했어요</p>
+            </div>
+          </article>
+          <article class="look-card">
+            <img src="./images/study.PNG" alt="리심스" class="look-card-image" />
+            <div class="look-card-body">
+              <div class="look-card-top">
+                <h3 class="look-card-title">리심스</h3>
+                <button type="button" class="look-card-heart" aria-pressed="false">
+                  <span class="look-card-heart-icon" aria-hidden="true">♥</span>
+                  <span class="visually-hidden">좋아요</span>
+                </button>
+              </div>
+              <p class="look-card-text">지난 기수에 리액트 심화 스터디를 들었어요</p>
+            </div>
+          </article>
+          <article class="look-card">
+            <img src="./images/newbuddy.png" alt="버디버디" class="look-card-image" />
+            <div class="look-card-body">
+              <div class="look-card-top">
+                <h3 class="look-card-title">뉴버디버디</h3>
+                <button type="button" class="look-card-heart" aria-pressed="false">
+                  <span class="look-card-heart-icon" aria-hidden="true">♥</span>
+                  <span class="visually-hidden">좋아요</span>
+                </button>
+              </div>
+              <p class="look-card-text">뉴버디버디가 생긴 날</p>
+            </div>
+          </article>
+        </div>
+      </section>
     </div>
   </main>
 
@@ -90,5 +180,14 @@
     <p class="footer-message">방문해 주셔서 감사합니다!</p>
   </footer>
 
+  <script>
+    document.querySelectorAll(".look-card-heart").forEach((button) => {
+      button.addEventListener("click", () => {
+        const isActive = button.getAttribute("aria-pressed") === "true";
+        button.setAttribute("aria-pressed", String(!isActive));
+      });
+    });
+  </script>
 </body>
+</html>
 </html>
