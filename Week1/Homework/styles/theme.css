@@ -6,17 +6,19 @@
   --color-border-subtle: #e5e7eb;
   --color-border-soft: rgba(0, 0, 0, 0.04);
   --color-hover-sunrise: #ffeca0;
-  --color-footer-bg: #f9dc7c;
-  --color-footer-border: #fbbf24;
+  --color-footer-bg: #dddddd;
   --color-menu-surface: #ffffff;
   --color-menu-border: #dbeafe;
   --color-menu-hover: #d0eaf8;
   --color-intro-surface: #f4f3f3;
   --color-intro-highlight: #fdbaba;
-  --color-skills-surface: #f5f9e5;
-  --color-skills-chip: #caebf9;
-  --color-looks-bg: #f5f3ff;
+  --color-skills-surface: #f0f4ff;
+  --color-skills-chip: #dfe8ff;
+  --color-skills-chip-text: #2f3f75;
+  --color-looks-bg: #fffdec;
   --color-looks-card: #ffffff;
   --color-heart-bg: #fde4f2;
   --color-heart-active: #f472b6;
+  --color-gallery-bg: #f3f5fb;
+  --color-message-bg: #fff2f4;
 }
