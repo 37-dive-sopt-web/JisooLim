@@ -108,6 +108,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 3.2rem;
+  min-width: 0;
 }
 
 /* 사이드 메뉴 */
@@ -313,7 +314,6 @@ body {
   border-radius: 32px;
   padding: 3.2rem 3.6rem;
   margin-top: 3.2rem;
-  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.12);
   scroll-margin-top: 9rem;
 }
 
@@ -417,6 +417,87 @@ body {
 .look-card-heart-input:focus-visible + .look-card-heart {
   outline: 0.2rem solid var(--color-heart-active);
   outline-offset: 0.3rem;
+}
+
+.gallery-section {
+  flex: 1 1 100%;
+  background: var(--color-skills-surface);
+  border-radius: 32px;
+  padding: 3.2rem 0;
+  margin-top: 3.2rem;
+  overflow-x: hidden;
+  overflow-y: visible;
+  position: relative;
+  scroll-margin-top: 9rem;
+}
+
+.gallery-header {
+  padding: 0 3.6rem 2.4rem;
+}
+
+.gallery-heading {
+  margin: 0;
+  font-size: 2.4rem;
+  font-weight: 700;
+}
+
+.gallery-scroller {
+  overflow: visible;
+  position: relative;
+}
+
+.gallery-scroller:hover .gallery-track,
+.gallery-scroller:focus-within .gallery-track {
+  animation-play-state: paused;
+}
+
+.gallery-track {
+  display: flex;
+  align-items: center;
+  gap: 2.4rem;
+  width: max-content;
+  animation: gallery-scroll 28s linear infinite;
+  padding: 0 3.6rem;
+  overflow: visible;
+}
+
+.gallery-item {
+  flex: 0 0 auto;
+  width: 22rem;
+  height: 14rem;
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--color-bg-surface);
+  box-shadow: 0 1.2rem 2.4rem rgba(15, 23, 42, 0.15);
+  position: relative;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  transform-origin: center;
+}
+
+.gallery-item[aria-hidden="true"] {
+  box-shadow: none;
+}
+
+.gallery-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.gallery-item:hover,
+.gallery-item:focus-within {
+  transform: scale(1.18);
+  z-index: 1;
+}
+
+@keyframes gallery-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 .visually-hidden {
