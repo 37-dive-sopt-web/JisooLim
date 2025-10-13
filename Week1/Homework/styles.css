@@ -12,9 +12,12 @@
     color: #111827;
     background: #f9fafb;
     padding-top: 84px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
   }
   
-  .profile-header {
+  .header {
     position: fixed;
     top: 0;
     left: 0;
@@ -96,4 +99,21 @@
     height: 18px;
     object-fit: contain;
     display: block;
+  }
+
+  .page-main {
+    flex: 1 0 auto;
+  }
+
+  .footer {
+    background: #f9dc7c;
+    border-top: 1px solid #fbbf24;
+    text-align: center;
+    padding: 24px 16px;
+  }
+
+  .footer-message {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
   }
