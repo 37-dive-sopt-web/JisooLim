@@ -17,7 +17,6 @@
   position: absolute;
   inset: 0;
   background: linear-gradient(135deg, transparent 30%, rgba(255, 255, 255, 0.4) 100%);
-  pointer-events: none;
 }
 
 .intro-image-wrapper {
@@ -29,6 +28,7 @@
   flex-shrink: 0;
   background: var(--color-intro-highlight);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  z-index: 1;
 }
 
 .intro-image {
@@ -89,13 +89,13 @@
 }
 
 .intro-link-instagram {
-  background: #fbcfe8;
-  color: #be185d;
+  background: var(--color-intro-instagram-bg);
+  color: var(--color-intro-instagram-text);
 }
 
 .intro-link-github {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--color-intro-btn-github-bg);
+  color: var(--color-intro-btn-github-text);
 }
 
 .intro-link:hover,
