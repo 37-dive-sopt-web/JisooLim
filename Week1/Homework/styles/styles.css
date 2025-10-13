@@ -306,7 +306,7 @@ body {
   font-weight: 600;
 }
 
-/* 나의 모습 섹션 */
+/* SOPT 섹션 */
 .looks-section {
   flex: 1 1 100%;
   background: var(--color-looks-bg);
@@ -396,15 +396,27 @@ body {
   transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
 
-.look-card-heart[aria-pressed="true"] {
-  background: var(--color-heart-active);
-  color: #ffffff;
-}
-
 .look-card-heart:hover,
 .look-card-heart:focus-visible {
   transform: scale(1.05);
   outline: none;
+}
+
+.look-card-heart-icon {
+  width: 1.6rem;
+  height: 1.6rem;
+  fill: currentColor;
+  display: block;
+}
+
+.look-card-heart-input:checked + .look-card-heart {
+  background: var(--color-heart-active);
+  color: #ffffff;
+}
+
+.look-card-heart-input:focus-visible + .look-card-heart {
+  outline: 0.2rem solid var(--color-heart-active);
+  outline-offset: 0.3rem;
 }
 
 .visually-hidden {
