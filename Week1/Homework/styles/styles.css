@@ -500,6 +500,37 @@ body {
   }
 }
 
+/* 한마디 섹션 */
+.message-section {
+  flex: 1 1 100%;
+  background: var(--color-bg-surface);
+  border-radius: 32px;
+  padding: 3.6rem;
+  margin-top: 3.2rem;
+  scroll-margin-top: 9rem;
+}
+
+.message-inner {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+  align-items: flex-start;
+}
+
+.message-heading {
+  margin: 0;
+  font-size: 2.4rem;
+  font-weight: 700;
+}
+
+.message-content {
+  margin: 0;
+  font-size: 1.8rem;
+  line-height: 1.6;
+  color: var(--color-text-base);
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;
