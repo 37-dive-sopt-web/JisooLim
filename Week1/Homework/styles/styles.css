@@ -103,6 +103,13 @@ body {
   padding-top: 0;
 }
 
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3.2rem;
+}
+
 /* 사이드 메뉴 */
 .side-menu {
   width: 22rem;
@@ -163,10 +170,10 @@ body {
   background: var(--color-intro-surface);
   border-radius: 32px;
   padding: 9rem 4rem 4rem;
-  box-shadow: 0 1.2rem 2.4rem rgba(148, 163, 184, 0.25);
   position: relative;
   overflow: hidden;
   margin-top: -6rem;
+  scroll-margin-top: 9rem;
 }
 
 .intro-section::before {
@@ -259,6 +266,47 @@ body {
 .intro-link:focus-visible {
   transform: scale(1.05);
   outline: none;
+}
+
+/* 스킬 섹션 */
+.skills-section {
+  flex: 1 1 100%;
+  margin-top: 3.2rem;
+  border-radius: 32px;
+  background: var(--color-skills-surface);
+  padding: 3.2rem 3.6rem;
+  scroll-margin-top: 9rem;
+}
+
+.skills-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+}
+
+.skills-heading {
+  margin: 0;
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--color-skills-text);
+}
+
+.skills-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.skills-chip {
+  background: var(--color-skills-chip);
+  color: var(--color-skills-text);
+  padding: 0.8rem 1.6rem;
+  border-radius: 9999px;
+  font-size: 1.4rem;
+  font-weight: 600;
 }
 
 /* 푸터 */

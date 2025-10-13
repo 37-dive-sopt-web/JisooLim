@@ -14,6 +14,10 @@
   --color-menu-text: #374151;
   --color-intro-surface: #f4f3f3;
   --color-intro-highlight: #fdbaba;
+  --color-intro-text: #1f2937;
   --color-intro-subtitle: #4b5563;
   --color-intro-btn: #faffe5;
+  --color-skills-surface: #f5f9e5;
+  --color-skills-chip: #caebf9;
+  --color-skills-text: #1f2937;
 }
