@@ -1,7 +1,7 @@
 .footer {
-  background: var(--color-footer-bg);
-  text-align: center;
   padding: 4rem 1.6rem;
+  text-align: center;
+  background: var(--color-footer-bg);
 }
 
 .footer-message {

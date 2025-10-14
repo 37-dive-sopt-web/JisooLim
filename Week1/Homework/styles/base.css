@@ -3,28 +3,28 @@ html {
 }
 
 body {
+  display: flex;
+  flex-direction: column;
+  padding-top: 8.4rem;
+  min-height: 100vh;
   font-family: "Noto Sans KR", sans-serif;
   color: var(--color-text-base);
   background: var(--color-bg-body);
-  padding-top: 8.4rem;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
 }
 
 .page-main {
-  flex: 1 0 auto;
   display: flex;
+  flex: 1 0 auto;
   align-items: flex-start;
   gap: 2.4rem;
   padding: 2.4rem;
-  margin-top: 0;
   padding-top: 0;
+  margin-top: 0;
 }
 
 .main-content {
-  flex: 1;
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 3.2rem;
   min-width: 0;
@@ -34,10 +34,10 @@ body {
   position: absolute;
   width: 1px;
   height: 1px;
-  padding: 0;
   margin: -1px;
+  padding: 0;
+  border: 0;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
-  border: 0;
 }
