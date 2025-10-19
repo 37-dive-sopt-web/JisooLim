@@ -236,6 +236,8 @@
 .look-card-heart:focus-visible {
   outline: none;
   transform: scale(1.05);
+  background: var(--color-heart-active);
+  color: var(--color-bg-surface);
 }
 
 .look-card-heart-icon {
@@ -247,7 +249,7 @@
 
 .look-card-heart-input:checked + .look-card-heart {
   background: var(--color-heart-active);
-  color: #ffffff;
+  color: var(--color-bg-surface);
 }
 
 .look-card-heart-input:focus-visible + .look-card-heart {
