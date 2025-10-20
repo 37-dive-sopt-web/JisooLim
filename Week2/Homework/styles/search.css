@@ -117,7 +117,6 @@ select.filter-control {
 .filter-button--apply {
     background: var(--green-50);
     color: var(--charcoal-900);
-    box-shadow: 0 0.8rem 1.8rem rgba(123, 210, 143, 0.35);
 }
 
 .filter-button--apply:hover,

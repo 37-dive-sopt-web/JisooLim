@@ -2,6 +2,7 @@
 @import url('./theme.css');
 @import url('./header.css');
 @import url('./search.css');
+@import url('./list.css');
 
 html {
     font-size: 62.5%;
