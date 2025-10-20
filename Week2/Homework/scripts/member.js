@@ -1,8 +1,42 @@
 import { seedMembers, getMembers, saveMembers, getNextMemberId } from './storage.js';
 import { renderMembers, syncSelectionState } from './render.js';
 
+const elements = {
+  modal: null,
+  modalForm: null,
+  tableBody: null,
+  selectAll: null,
+  deleteButton: null,
+  filterForm: null,
+  filterReset: null,
+};
+
+const cacheElements = () => {
+  elements.modal = document.getElementById('member-modal');
+  elements.modalForm = document.querySelector('.modal-form');
+  elements.tableBody = document.getElementById('member-table-body');
+  elements.selectAll = document.getElementById('select-all');
+  elements.deleteButton = document.getElementById('delete-selected');
+  elements.filterForm = document.getElementById('member-filter-form');
+  elements.filterReset = document.getElementById('filter-reset');
+};
+
+const normalizeText = (value) => value?.toString().trim().toLowerCase() ?? '';
+const getTrimmedValue = (formData, key) => formData.get(key)?.toString().trim() ?? '';
+const parseNumberValue = (value) => {
+  const trimmed = value?.toString().trim();
+  if (!trimmed) return null;
+  const num = Number(trimmed);
+  return Number.isFinite(num) ? num : null;
+};
+
+const getMemberCheckboxes = () =>
+  elements.tableBody
+    ? Array.from(elements.tableBody.querySelectorAll('.member-checkbox'))
+    : [];
+
 const closeModal = () => {
-  const modal = document.getElementById('member-modal');
+  const { modal } = elements;
   if (!modal) return;
   const closeButton = modal.querySelector('[data-modal-close]');
   if (closeButton instanceof HTMLButtonElement) {
@@ -19,23 +53,23 @@ const handleAddMember = (event) => {
   const form = event.currentTarget;
   const formData = new FormData(form);
 
-  const name = formData.get('modal-name')?.toString().trim();
-  const englishName = formData.get('modal-english-name')?.toString().trim();
-  const github = formData.get('modal-github')?.toString().trim();
+  const name = getTrimmedValue(formData, 'modal-name');
+  const englishName = getTrimmedValue(formData, 'modal-english-name');
+  const github = getTrimmedValue(formData, 'modal-github');
   const gender = formData.get('modal-gender')?.toString();
   const role = formData.get('modal-role')?.toString();
-  const team = formData.get('modal-team')?.toString().trim();
-  const ageValue = formData.get('modal-age')?.toString().trim();
+  const team = getTrimmedValue(formData, 'modal-team');
+  const ageValue = getTrimmedValue(formData, 'modal-age');
 
   if (!name || !englishName || !github || !gender || !role || !team || !ageValue) {
     alert('모든 항목을 입력해주세요.');
     return;
   }
 
-  const age = Number(ageValue);
-  const codeReviewGroup = Number(team);
+  const age = parseNumberValue(ageValue);
+  const codeReviewGroup = parseNumberValue(team);
 
-  if (Number.isNaN(age) || Number.isNaN(codeReviewGroup)) {
+  if (age === null || codeReviewGroup === null) {
     alert('금잔디조와 나이는 숫자로 입력해주세요.');
     return;
   }
@@ -64,7 +98,7 @@ const handleAddMember = (event) => {
 
 const handleDeleteSelected = () => {
   const stored = getMembers();
-  const selectedIds = Array.from(document.querySelectorAll('.member-checkbox'))
+  const selectedIds = getMemberCheckboxes()
     .filter((checkbox) => checkbox.checked)
     .map((checkbox) => Number(checkbox.closest('tr')?.dataset.memberId));
 
@@ -81,13 +115,25 @@ const handleFilterSubmit = (event) => {
   const form = event.currentTarget;
   const formData = new FormData(form);
 
-  const name = formData.get('name')?.toString().trim().toLowerCase();
-  const englishName = formData.get('english-name')?.toString().trim().toLowerCase();
-  const github = formData.get('github')?.toString().trim().toLowerCase();
+  const name = normalizeText(formData.get('name'));
+  const englishName = normalizeText(formData.get('english-name'));
+  const github = normalizeText(formData.get('github'));
   const gender = formData.get('gender')?.toString();
   const role = formData.get('role')?.toString();
-  const team = formData.get('team')?.toString().trim();
-  const age = formData.get('age')?.toString().trim();
+  const teamInput = getTrimmedValue(formData, 'team');
+  const ageInput = getTrimmedValue(formData, 'age');
+  const teamNumber = parseNumberValue(teamInput);
+  const ageNumber = parseNumberValue(ageInput);
+
+  if (teamInput && teamNumber === null) {
+    alert('금잔디조는 숫자로 검색해주세요.');
+    return;
+  }
+
+  if (ageInput && ageNumber === null) {
+    alert('나이는 숫자로 검색해주세요.');
+    return;
+  }
 
   const baseList = getMembers();
 
@@ -97,25 +143,28 @@ const handleFilterSubmit = (event) => {
     if (github && !member.github?.toLowerCase().includes(github)) return false;
     if (gender && gender !== member.gender) return false;
     if (role && role !== member.role) return false;
-    if (team) {
-      if (String(member.codeReviewGroup ?? '').toLowerCase() !== team.toLowerCase()) return false;
+    if (teamInput) {
+      if ((member.codeReviewGroup ?? null) !== teamNumber) return false;
     }
-    if (age) {
-      if (String(member.age ?? '').toLowerCase() !== age.toLowerCase()) return false;
+    if (ageInput) {
+      if ((member.age ?? null) !== ageNumber) return false;
     }
     return true;
   });
 
   renderMembers(filtered);
+  syncSelectionState();
 };
 
 const attachEventListeners = () => {
-  const tableBody = document.getElementById('member-table-body');
-  const selectAll = document.getElementById('select-all');
-  const deleteButton = document.getElementById('delete-selected');
-  const modalForm = document.querySelector('.modal-form');
-  const filterForm = document.getElementById('member-filter-form');
-  const resetButton = document.getElementById('filter-reset');
+  const {
+    tableBody,
+    selectAll,
+    deleteButton,
+    modalForm,
+    filterForm,
+    filterReset,
+  } = elements;
 
   if (tableBody) {
     tableBody.addEventListener('change', (event) => {
@@ -127,7 +176,7 @@ const attachEventListeners = () => {
 
   if (selectAll) {
     selectAll.addEventListener('change', () => {
-      const checkboxes = document.querySelectorAll('.member-checkbox');
+      const checkboxes = getMemberCheckboxes();
       checkboxes.forEach((checkbox) => {
         checkbox.checked = selectAll.checked;
       });
@@ -147,15 +196,17 @@ const attachEventListeners = () => {
     filterForm.addEventListener('submit', handleFilterSubmit);
   }
 
-  if (filterForm && resetButton) {
-    resetButton.addEventListener('click', () => {
+  if (filterForm && filterReset) {
+    filterReset.addEventListener('click', () => {
       filterForm.reset();
       renderMembers(getMembers());
+      syncSelectionState();
     });
   }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+  cacheElements();
   seedMembers();
   renderMembers(getMembers());
   attachEventListeners();
