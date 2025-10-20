@@ -403,6 +403,7 @@ const attachEventListeners = () => {
   const tableBody = document.getElementById('member-table-body');
   const selectAll = document.getElementById('select-all');
   const deleteButton = document.getElementById('delete-selected');
+  const modalForm = document.querySelector('.modal-form');
 
   if (tableBody) {
     tableBody.addEventListener('change', (event) => {
@@ -425,6 +426,10 @@ const attachEventListeners = () => {
   if (deleteButton) {
     deleteButton.addEventListener('click', handleDeleteSelected);
   }
+
+  if (modalForm) {
+    modalForm.addEventListener('submit', handleAddMember);
+  }
 };
 
 const handleDeleteSelected = () => {
@@ -439,6 +444,68 @@ const handleDeleteSelected = () => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(nextMembers));
   renderMembers(nextMembers);
   syncSelectionState();
+};
+
+const handleAddMember = (event) => {
+  event.preventDefault();
+
+  const form = event.currentTarget;
+  const formData = new FormData(form);
+
+  const name = formData.get('modal-name')?.toString().trim();
+  const englishName = formData.get('modal-english-name')?.toString().trim();
+  const github = formData.get('modal-github')?.toString().trim();
+  const gender = formData.get('modal-gender')?.toString();
+  const role = formData.get('modal-role')?.toString();
+  const team = formData.get('modal-team')?.toString().trim();
+  const ageValue = formData.get('modal-age')?.toString().trim();
+
+  if (!name || !englishName || !github || !gender || !role || !team || !ageValue) {
+    alert('모든 항목을 입력해주세요.');
+    return;
+  }
+
+  const age = Number(ageValue);
+  const codeReviewGroup = Number(team);
+
+  if (Number.isNaN(age) || Number.isNaN(codeReviewGroup)) {
+    alert('금잔디조와 나이는 숫자로 입력해주세요.');
+    return;
+  }
+
+  const stored = getMembers();
+  const nextId = stored.reduce((max, member) => Math.max(max, member.id ?? 0), 0) + 1;
+
+  const newMember = {
+    id: nextId,
+    name,
+    englishName,
+    github,
+    gender,
+    role,
+    codeReviewGroup,
+    age,
+  };
+
+  const nextMembers = [...stored, newMember];
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(nextMembers));
+  renderMembers(nextMembers);
+  syncSelectionState();
+
+  form.reset();
+  closeModal();
+};
+
+const closeModal = () => {
+  const modal = document.getElementById('member-modal');
+  if (!modal) return;
+  const closeButton = modal.querySelector('[data-modal-close]');
+  if (closeButton instanceof HTMLButtonElement) {
+    closeButton.click();
+  } else {
+    modal.hidden = true;
+    document.body.removeAttribute('data-modal-open');
+  }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
