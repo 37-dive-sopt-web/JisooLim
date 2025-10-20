@@ -1,5 +1,6 @@
 import { seedMembers, getMembers, saveMembers, getNextMemberId } from './storage.js';
 import { renderMembers, syncSelectionState } from './render.js';
+import { closeModal as closeModalById } from './modal.js';
 
 const elements = {
   modal: null,
@@ -34,18 +35,6 @@ const getMemberCheckboxes = () =>
   elements.tableBody
     ? Array.from(elements.tableBody.querySelectorAll('.member-checkbox'))
     : [];
-
-const closeModal = () => {
-  const { modal } = elements;
-  if (!modal) return;
-  const closeButton = modal.querySelector('[data-modal-close]');
-  if (closeButton instanceof HTMLButtonElement) {
-    closeButton.click();
-  } else {
-    modal.hidden = true;
-    document.body.removeAttribute('data-modal-open');
-  }
-};
 
 const handleAddMember = (event) => {
   event.preventDefault();
@@ -93,7 +82,7 @@ const handleAddMember = (event) => {
   renderMembers(nextMembers);
 
   form.reset();
-  closeModal();
+  closeModalById(elements.modal);
 };
 
 const handleDeleteSelected = () => {
