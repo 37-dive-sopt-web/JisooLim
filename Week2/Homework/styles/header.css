@@ -4,11 +4,20 @@
     right: 0;
     left: 0;
     z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.6rem;
+    padding: 2rem 8rem;
+    box-shadow: 0 0.6rem 1.6rem rgba(0, 0, 0, 0.12);
+}
+
+.header__inner {
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;
-    padding: 2rem 8rem;
-    box-shadow: 0 0.6rem 1.6rem rgba(0, 0, 0, 0.12);
+    gap: 1.2rem;
+    width: min(100%, 960px);
 }
 
 .header__icon {
@@ -28,4 +37,24 @@
     font-weight: 600;
     letter-spacing: 0.08em;
     text-align: right;
+}
+
+@media (max-width: 960px) {
+    .header {
+        padding: 1.6rem 3.2rem;
+    }
+
+    .header__inner {
+        grid-template-columns: auto 1fr;
+    }
+
+    .header__name {
+        display: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .header {
+        padding: 1.4rem 2rem;
+    }
 }

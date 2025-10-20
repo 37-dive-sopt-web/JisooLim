@@ -8,9 +8,58 @@
 </head>
 <body>
     <header class="header">
-        <span class="header__icon" role="img" aria-label="Christmas tree">🎄</span>
-        <h1 class="header__title">관리 페이지</h1>
-        <span class="header__name">DIVE SOPT 37기 임지수</span>
+        <div class="header__inner">
+            <span class="header__icon" role="img" aria-label="Christmas tree">🎄</span>
+            <h1 class="header__title">관리 페이지</h1>
+            <span class="header__name">DIVE SOPT 37기 임지수</span>
+        </div>
     </header>
+    <main class="page-main">
+        <section class="filter-panel">
+            <h2 class="filter-title">검색 필터</h2>
+            <form class="filter-form">
+                <div class="filter-field filter-field--full">
+                    <label class="filter-label" for="name">이름</label>
+                    <input class="filter-control" type="text" id="name" name="name" placeholder="이름을 입력하세요">
+                </div>
+                <div class="filter-field filter-field--full">
+                    <label class="filter-label" for="english-name">영문 이름</label>
+                    <input class="filter-control" type="text" id="english-name" name="english-name" placeholder="영문 이름을 입력하세요">
+                </div>
+                <div class="filter-field filter-field--wide">
+                    <label class="filter-label" for="github">깃허브</label>
+                    <input class="filter-control" type="text" id="github" name="github" placeholder="깃허브 아이디를 입력하세요">
+                </div>
+                <div class="filter-field filter-field--medium">
+                    <label class="filter-label" for="gender">성별</label>
+                    <select class="filter-control" id="gender" name="gender">
+                        <option value="">전체</option>
+                        <option value="female">여자</option>
+                        <option value="male">남자</option>
+                    </select>
+                </div>
+                <div class="filter-field filter-field--medium">
+                    <label class="filter-label" for="role">역할</label>
+                    <select class="filter-control" id="role" name="role">
+                        <option value="">전체</option>
+                        <option value="ob">OB</option>
+                        <option value="yb">YB</option>
+                    </select>
+                </div>
+                <div class="filter-field filter-field--large">
+                    <label class="filter-label" for="team">금잔디조</label>
+                    <input class="filter-control" type="text" id="team" name="team" placeholder="금잔디조를 입력하세요 (1~9)">
+                </div>
+                <div class="filter-field filter-field--small">
+                    <label class="filter-label" for="age">나이</label>
+                    <input class="filter-control" type="number" id="age" name="age" placeholder="나이를 입력하세요">
+                </div>
+                <div class="filter-actions">
+                    <button class="filter-button filter-button--apply" type="submit">적용</button>
+                    <button class="filter-button filter-button--reset" type="reset">초기화</button>
+                </div>
+            </form>
+        </section>
+    </main>
 </body>
 </html>
