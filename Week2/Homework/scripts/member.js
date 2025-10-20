@@ -430,6 +430,20 @@ const attachEventListeners = () => {
   if (modalForm) {
     modalForm.addEventListener('submit', handleAddMember);
   }
+
+  const filterForm = document.getElementById('member-filter-form');
+  const resetButton = document.getElementById('filter-reset');
+
+  if (filterForm) {
+    filterForm.addEventListener('submit', handleFilterSubmit);
+  }
+
+  if (filterForm && resetButton) {
+    resetButton.addEventListener('click', () => {
+      filterForm.reset();
+      renderMembers(getMembers());
+    });
+  }
 };
 
 const handleDeleteSelected = () => {
@@ -506,6 +520,39 @@ const closeModal = () => {
     modal.hidden = true;
     document.body.removeAttribute('data-modal-open');
   }
+};
+
+const handleFilterSubmit = (event) => {
+  event.preventDefault();
+
+  const form = event.currentTarget;
+  const formData = new FormData(form);
+
+  const name = formData.get('name')?.toString().trim().toLowerCase();
+  const englishName = formData.get('english-name')?.toString().trim().toLowerCase();
+  const github = formData.get('github')?.toString().trim().toLowerCase();
+  const gender = formData.get('gender')?.toString();
+  const role = formData.get('role')?.toString();
+  const team = formData.get('team')?.toString().trim();
+  const age = formData.get('age')?.toString().trim();
+
+  const baseList = getMembers();
+  const filtered = baseList.filter((member) => {
+    if (name && !member.name?.toLowerCase().includes(name)) return false;
+    if (englishName && !member.englishName?.toLowerCase().includes(englishName)) return false;
+    if (github && !member.github?.toLowerCase().includes(github)) return false;
+    if (gender && gender !== member.gender) return false;
+    if (role && role !== member.role) return false;
+    if (team) {
+      if (String(member.codeReviewGroup ?? '').toLowerCase() !== team.toLowerCase()) return false;
+    }
+    if (age) {
+      if (String(member.age ?? '').toLowerCase() !== age.toLowerCase()) return false;
+    }
+    return true;
+  });
+
+  renderMembers(filtered);
 };
 
 document.addEventListener('DOMContentLoaded', () => {

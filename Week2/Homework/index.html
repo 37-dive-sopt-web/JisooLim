@@ -18,7 +18,7 @@
     <main class="page-main">
         <section class="filter-panel" aria-labelledby="filter-title">
             <h2 class="filter-title" id="filter-title">검색 필터</h2>
-            <form class="filter-form" aria-describedby="filter-description">
+            <form class="filter-form" aria-describedby="filter-description" id="member-filter-form">
                 <fieldset class="filter-grid">
                     <legend class="sr-only" id="filter-description">검색 조건 입력</legend>
                     <div class="filter-field filter-field--full">
@@ -60,7 +60,7 @@
                 </fieldset>
                 <div class="filter-actions">
                     <button class="filter-button filter-button--apply" type="submit">적용</button>
-                    <button class="filter-button filter-button--reset" type="reset">초기화</button>
+                    <button class="filter-button filter-button--reset" type="reset" id="filter-reset">초기화</button>
                 </div>
             </form>
         </section>
