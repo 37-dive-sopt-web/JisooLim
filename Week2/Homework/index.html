@@ -67,7 +67,7 @@
             <header class="list-panel__header">
                 <h2 class="list-panel__title">37기 웹 파트 목록</h2>
                 <div class="list-panel__actions">
-                    <button class="list-panel__button list-panel__button--ghost" type="button">선택 삭제</button>
+                    <button class="list-panel__button list-panel__button--ghost" type="button" id="delete-selected">선택 삭제</button>
                     <button class="list-panel__button list-panel__button--solid" type="button" data-modal-target="member-modal">추가</button>
                 </div>
             </header>
@@ -76,7 +76,7 @@
                     <thead>
                         <tr>
                             <th scope="col" class="list-table__cell--checkbox">
-                                <input type="checkbox" aria-label="전체 선택">
+                                <input type="checkbox" aria-label="전체 선택" id="select-all">
                             </th>
                             <th scope="col">이름</th>
                             <th scope="col">영문 이름</th>

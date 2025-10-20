@@ -38,14 +38,21 @@
     cursor: pointer;
 }
 
+.list-panel__button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
+}
+
 .list-panel__button--ghost {
     background: var(--white);
     color: var(--charcoal-900);
     border-color: var(--gray-200);
 }
 
-.list-panel__button--ghost:hover,
-.list-panel__button--ghost:focus-visible {
+.list-panel__button--ghost:hover:not(:disabled),
+.list-panel__button--ghost:focus-visible:not(:disabled) {
     background: var(--gray-50);
     transform: translateY(-1px);
 }
@@ -56,8 +63,8 @@
     border-color: transparent;
 }
 
-.list-panel__button--solid:hover,
-.list-panel__button--solid:focus-visible {
+.list-panel__button--solid:hover:not(:disabled),
+.list-panel__button--solid:focus-visible:not(:disabled) {
     background: var(--green-60);
     transform: translateY(-1px);
 }

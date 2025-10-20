@@ -301,13 +301,23 @@ export const getMembers = () => {
   }
 };
 
-export const renderMembers = (list = []) => {
+const genderLabel = {
+  female: '여자',
+  male: '남자',
+};
+
+const renderMembers = (list = []) => {
   const tableBody = document.getElementById('member-table-body');
+  const selectAll = document.getElementById('select-all');
+  const deleteButton = document.getElementById('delete-selected');
   if (!tableBody) return;
 
   tableBody.innerHTML = '';
 
   if (!list.length) {
+    if (selectAll) selectAll.checked = false;
+    if (deleteButton) deleteButton.disabled = true;
+
     const emptyRow = document.createElement('tr');
     emptyRow.className = 'list-table__empty-row';
     const emptyCell = document.createElement('td');
@@ -319,11 +329,6 @@ export const renderMembers = (list = []) => {
     return;
   }
 
-  const genderLabel = {
-    female: '여자',
-    male: '남자',
-  };
-
   list.forEach((member) => {
     const row = document.createElement('tr');
     row.dataset.memberId = String(member.id ?? '');
@@ -333,6 +338,7 @@ export const renderMembers = (list = []) => {
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.setAttribute('aria-label', `${member.name ?? '멤버'} 선택`);
+    checkbox.className = 'member-checkbox';
     checkboxCell.appendChild(checkbox);
     row.appendChild(checkboxCell);
 
@@ -372,10 +378,72 @@ export const renderMembers = (list = []) => {
 
     tableBody.appendChild(row);
   });
+  syncSelectionState();
+};
+
+const syncSelectionState = () => {
+  const selectAll = document.getElementById('select-all');
+  const deleteButton = document.getElementById('delete-selected');
+  const checkboxes = Array.from(document.querySelectorAll('.member-checkbox'));
+
+  const hasMembers = checkboxes.length > 0;
+  const checkedCount = checkboxes.filter((checkbox) => checkbox.checked).length;
+
+  if (selectAll) {
+    selectAll.checked = hasMembers && checkedCount === checkboxes.length;
+    selectAll.indeterminate = false;
+  }
+
+  if (deleteButton) {
+    deleteButton.disabled = checkedCount === 0;
+  }
+};
+
+const attachEventListeners = () => {
+  const tableBody = document.getElementById('member-table-body');
+  const selectAll = document.getElementById('select-all');
+  const deleteButton = document.getElementById('delete-selected');
+
+  if (tableBody) {
+    tableBody.addEventListener('change', (event) => {
+      if (event.target && event.target.classList.contains('member-checkbox')) {
+        syncSelectionState();
+      }
+    });
+  }
+
+  if (selectAll) {
+    selectAll.addEventListener('change', () => {
+      const checkboxes = document.querySelectorAll('.member-checkbox');
+      checkboxes.forEach((checkbox) => {
+        checkbox.checked = selectAll.checked;
+      });
+      syncSelectionState();
+    });
+  }
+
+  if (deleteButton) {
+    deleteButton.addEventListener('click', handleDeleteSelected);
+  }
+};
+
+const handleDeleteSelected = () => {
+  const stored = getMembers();
+  const selectedIds = Array.from(document.querySelectorAll('.member-checkbox'))
+    .filter((checkbox) => checkbox.checked)
+    .map((checkbox) => Number(checkbox.closest('tr')?.dataset.memberId));
+
+  if (!selectedIds.length) return;
+
+  const nextMembers = stored.filter((member) => !selectedIds.includes(member.id));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(nextMembers));
+  renderMembers(nextMembers);
+  syncSelectionState();
 };
 
 document.addEventListener('DOMContentLoaded', () => {
   seedMembers();
   const currentMembers = getMembers();
   renderMembers(currentMembers);
+  attachEventListeners();
 });
