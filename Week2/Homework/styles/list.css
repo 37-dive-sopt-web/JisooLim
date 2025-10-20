@@ -118,6 +118,16 @@
     color: rgba(29, 42, 45, 0.55);
 }
 
+.list-table__link {
+    color: var(--green-60);
+    font-weight: 600;
+}
+
+.list-table__link:hover,
+.list-table__link:focus-visible {
+    text-decoration: underline;
+}
+
 @media (max-width: 960px) {
     .list-panel {
         padding: 2.4rem;
