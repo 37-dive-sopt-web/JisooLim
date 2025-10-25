@@ -1,0 +1,28 @@
+:root {
+  --color-text-base: #111827;
+  --color-text-muted: #6b7280;
+  --color-bg-body: #f9fafb;
+  --color-bg-surface: #ffffff;
+  --color-border-subtle: #e5e7eb;
+  --color-border-soft: rgba(0, 0, 0, 0.04);
+  --color-hover-sunrise: #ffeca0;
+  --color-footer-bg: #dddddd;
+  --color-menu-surface: #ffffff;
+  --color-menu-border: #dbeafe;
+  --color-menu-hover: #d0eaf8;
+  --color-intro-surface: #f4f3f3;
+  --color-intro-highlight: #fdbaba;
+  --color-intro-instagram-bg: #fbcfe8;
+  --color-intro-instagram-text: #be185d;
+  --color-intro-btn-github-bg: #d1fae5;
+  --color-intro-btn-github-text: #065f46;
+  --color-skills-surface: #f0f4ff;
+  --color-skills-chip: #dfe8ff;
+  --color-skills-chip-text: #2f3f75;
+  --color-looks-bg: #fffdec;
+  --color-looks-card: #ffffff;
+  --color-heart-bg: #fde4f2;
+  --color-heart-active: #f472b6;
+  --color-gallery-bg: #f3f5fb;
+  --color-message-bg: #fff2f4;
+}
