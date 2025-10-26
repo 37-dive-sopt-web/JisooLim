@@ -38,6 +38,9 @@ const openModalElement = (modal) => {
 
   lastFocusedElement = document.activeElement;
   modal.hidden = false;
+  modal.setAttribute('role', 'dialog');
+  modal.setAttribute('aria-modal', 'true');
+  modal.removeAttribute('aria-hidden');
   activeModal = modal;
   setBodyScroll(true);
 
@@ -51,6 +54,9 @@ const openModalElement = (modal) => {
 const closeModalElement = (modal) => {
   if (!modal || activeModal !== modal) return;
 
+  modal.setAttribute('aria-hidden', 'true');
+  modal.removeAttribute('role');
+  modal.removeAttribute('aria-modal');
   modal.hidden = true;
   activeModal = null;
   setBodyScroll(false);

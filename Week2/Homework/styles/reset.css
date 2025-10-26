@@ -10,7 +10,10 @@ html {
 
 body {
     margin: 0;
+    padding-top: 8rem;
     min-height: 100vh;
+    background: var(--white);
+    font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
 }

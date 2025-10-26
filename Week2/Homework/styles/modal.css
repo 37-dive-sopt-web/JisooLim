@@ -81,7 +81,7 @@
 
 .modal-form__label {
     font-size: 1.4rem;
-    font-weight: 600;
+    font-weight: 700;
     color: rgba(29, 42, 45, 0.86);
 }
 
@@ -118,7 +118,6 @@ select.modal-form__control {
 .modal-form__actions {
     display: flex;
     justify-content: flex-end;
-    margin-top: 0.4rem;
 }
 
 .modal-form__submit {

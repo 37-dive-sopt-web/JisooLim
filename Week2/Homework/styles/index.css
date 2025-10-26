@@ -5,16 +5,3 @@
 @import url('./list.css');
 @import url('./modal.css');
 @import url('./cursor.css');
-
-html {
-    font-size: 62.5%;
-}
-
-body {
-    margin: 0;
-    padding: 10rem 0 0;
-    font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
-    background: var(--white);
-    color: var(--charcoal-900);
-    line-height: 1.5;
-}

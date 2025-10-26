@@ -92,7 +92,7 @@
     font-size: 1.4rem;
     color: var(--charcoal-900);
     border-bottom: 1px solid var(--gray-200);
-    text-align: left;
+    text-align: center;
 }
 
 .list-table th {
@@ -118,7 +118,7 @@
     background: var(--gray-50);
 }
 
-.list-table__empty-row td {
+.list-table__empty-message {
     padding: 3.2rem 1.6rem;
     text-align: center;
     font-size: 1.4rem;
@@ -152,7 +152,7 @@
 
 @media (max-width: 640px) {
     .list-panel {
-        padding: 2rem 1.8rem 2.4rem;
+        padding: 2rem
     }
 
     .list-panel__header {

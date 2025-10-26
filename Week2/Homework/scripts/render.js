@@ -7,6 +7,7 @@ export function renderMembers(list = []) {
   const tableBody = document.getElementById('member-table-body');
   const selectAll = document.getElementById('select-all');
   const deleteButton = document.getElementById('delete-selected');
+  const emptyState = document.getElementById('member-empty-state');
   if (!tableBody) return;
 
   tableBody.innerHTML = '';
@@ -14,16 +15,16 @@ export function renderMembers(list = []) {
   if (!list.length) {
     if (selectAll) selectAll.checked = false;
     if (deleteButton) deleteButton.disabled = true;
-
-    const emptyRow = document.createElement('tr');
-    emptyRow.className = 'list-table__empty-row';
-    const emptyCell = document.createElement('td');
-    emptyCell.colSpan = 8;
-    emptyCell.className = 'list-table__empty';
-    emptyCell.textContent = '목록이 비어 있습니다.';
-    emptyRow.appendChild(emptyCell);
-    tableBody.appendChild(emptyRow);
+    if (emptyState) {
+      emptyState.hidden = false;
+      emptyState.removeAttribute('aria-hidden');
+    }
     return;
+  }
+
+  if (emptyState) {
+    emptyState.hidden = true;
+    emptyState.setAttribute('aria-hidden', 'true');
   }
 
   list.forEach((member) => {
