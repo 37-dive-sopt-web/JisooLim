@@ -40,7 +40,7 @@
     text-align: right;
 }
 
-@media (max-width: 960px) {
+@media (max-width: var(--bp-medium)) {
     .header {
         padding: 1.6rem 3.2rem;
     }
@@ -54,7 +54,7 @@
     }
 }
 
-@media (max-width: 640px) {
+@media (max-width: var(--bp-small)) {
     .header {
         padding: 1.4rem 2rem;
     }

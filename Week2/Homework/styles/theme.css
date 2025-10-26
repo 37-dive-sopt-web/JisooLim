@@ -8,4 +8,6 @@
     --green-80: #2f855a;
     --gray-200: #d8dde3;
     --gray-300: #c2c9d1;
+    --bp-medium: 960px;
+    --bp-small: 640px;
 }

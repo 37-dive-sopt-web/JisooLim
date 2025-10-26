@@ -135,7 +135,7 @@
     text-decoration: underline;
 }
 
-@media (max-width: 960px) {
+@media (max-width: var(--bp-medium)) {
     .list-panel {
         padding: 2.4rem;
     }
@@ -150,7 +150,7 @@
     }
 }
 
-@media (max-width: 640px) {
+@media (max-width: var(--bp-small)) {
     .list-panel {
         padding: 2rem
     }

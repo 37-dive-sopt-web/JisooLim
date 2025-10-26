@@ -1,7 +1,7 @@
 .page-main {
     max-width: 1100px;
     margin: 4rem auto 6rem;
-    padding: 0 3.2rem;
+    padding: 8rem 3.2rem 0;
 }
 
 .sr-only {
@@ -158,10 +158,10 @@ select.filter-control {
     transform: translateY(-1px);
 }
 
-@media (max-width: 960px) {
+@media (max-width: var(--bp-medium)) {
     .page-main {
         margin: 3.2rem auto 4.8rem;
-        padding: 0 2.4rem;
+        padding: 8rem 2.4rem 0;
     }
 
     .filter-grid {
@@ -179,10 +179,10 @@ select.filter-control {
     }
 }
 
-@media (max-width: 640px) {
+@media (max-width: var(--bp-small)) {
     .page-main {
         margin: 2.4rem auto 4rem;
-        padding: 0 1.6rem;
+        padding: 8rem 1.6rem 0;
     }
 
     .filter-panel {
