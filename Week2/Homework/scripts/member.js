@@ -42,10 +42,11 @@ const cacheElements = () => {
   elements.filterReset = document.getElementById('filter-reset');
 };
 
-const normalizeText = (value) => value?.toString().trim().toLowerCase() ?? '';
-const getTrimmedValue = (formData, key) => formData.get(key)?.toString().trim() ?? '';
+const toTrimmedString = (value) => value?.toString().trim() ?? '';
+const normalizeText = (value) => toTrimmedString(value).toLowerCase();
+const getTrimmedValue = (formData, key) => toTrimmedString(formData.get(key));
 const parseNumberValue = (value) => {
-  const trimmed = value?.toString().trim();
+  const trimmed = toTrimmedString(value);
   if (!trimmed) return null;
   const num = Number(trimmed);
   return Number.isFinite(num) ? num : null;
