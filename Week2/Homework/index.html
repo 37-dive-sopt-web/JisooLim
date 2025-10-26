@@ -36,18 +36,14 @@
                     </div>
                     <div class="filter-field filter-field--medium">
                         <label class="filter-label" for="gender">성별</label>
-                        <select class="filter-control" id="gender" name="gender">
+                        <select class="filter-control" id="gender" name="gender" data-options-template="gender-options-template">
                             <option value="">전체</option>
-                            <option value="female">여자</option>
-                            <option value="male">남자</option>
                         </select>
                     </div>
                     <div class="filter-field filter-field--medium">
                         <label class="filter-label" for="role">역할</label>
-                        <select class="filter-control" id="role" name="role">
+                        <select class="filter-control" id="role" name="role" data-options-template="role-options-template">
                             <option value="">전체</option>
-                            <option value="ob">OB</option>
-                            <option value="yb">YB</option>
                         </select>
                     </div>
                     <div class="filter-field filter-field--large">
@@ -123,18 +119,14 @@
                 <div class="modal-form__grid">
                     <div class="modal-form__field">
                         <label class="modal-form__label" for="modal-gender">성별</label>
-                        <select class="modal-form__control modal-form__control--select" id="modal-gender" name="modal-gender">
+                        <select class="modal-form__control modal-form__control--select" id="modal-gender" name="modal-gender" data-options-template="gender-options-template">
                             <option value="">선택</option>
-                            <option value="female">여자</option>
-                            <option value="male">남자</option>
                         </select>
                     </div>
                     <div class="modal-form__field">
                         <label class="modal-form__label" for="modal-role">역할</label>
-                        <select class="modal-form__control modal-form__control--select" id="modal-role" name="modal-role">
+                        <select class="modal-form__control modal-form__control--select" id="modal-role" name="modal-role" data-options-template="role-options-template">
                             <option value="">선택</option>
-                            <option value="ob">OB</option>
-                            <option value="yb">YB</option>
                         </select>
                     </div>
                 </div>
@@ -154,6 +146,14 @@
             </form>
         </div>
     </div>
+    <template id="gender-options-template">
+        <option value="female">여자</option>
+        <option value="male">남자</option>
+    </template>
+    <template id="role-options-template">
+        <option value="ob">OB</option>
+        <option value="yb">YB</option>
+    </template>
     <script type="module" src="./scripts/index.js"></script>
 </body>
 </html>
