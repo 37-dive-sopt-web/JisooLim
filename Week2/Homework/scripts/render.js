@@ -12,20 +12,32 @@ export function renderMembers(list = []) {
 
   tableBody.innerHTML = '';
 
+  const toggleEmptyState = (isEmpty) => {
+    if (!emptyState) return;
+    emptyState.hidden = !isEmpty;
+    if (isEmpty) {
+      emptyState.removeAttribute('aria-hidden');
+    } else {
+      emptyState.setAttribute('aria-hidden', 'true');
+    }
+  };
+
   if (!list.length) {
     if (selectAll) selectAll.checked = false;
     if (deleteButton) deleteButton.disabled = true;
-    if (emptyState) {
-      emptyState.hidden = false;
-      emptyState.removeAttribute('aria-hidden');
-    }
+    toggleEmptyState(true);
     return;
   }
 
-  if (emptyState) {
-    emptyState.hidden = true;
-    emptyState.setAttribute('aria-hidden', 'true');
-  }
+  toggleEmptyState(false);
+
+  const fragment = document.createDocumentFragment();
+
+  const createTextCell = (value) => {
+    const cell = document.createElement('td');
+    cell.textContent = value ?? '-';
+    return cell;
+  };
 
   list.forEach((member) => {
     const row = document.createElement('tr');
@@ -40,46 +52,42 @@ export function renderMembers(list = []) {
     checkboxCell.appendChild(checkbox);
     row.appendChild(checkboxCell);
 
-    const createTextCell = (value) => {
-      const cell = document.createElement('td');
-      cell.textContent = value ?? '-';
-      return cell;
-    };
+    const columnValues = [
+      member.name ?? '-',
+      member.englishName ?? '-',
+      member.github,
+      genderLabel[member.gender] ?? member.gender ?? '-',
+      member.role ?? '-',
+      member.codeReviewGroup !== undefined && member.codeReviewGroup !== null
+        ? String(member.codeReviewGroup)
+        : '-',
+      member.age !== undefined && member.age !== null ? String(member.age) : '-',
+    ];
 
-    row.appendChild(createTextCell(member.name ?? '-'));
-    row.appendChild(createTextCell(member.englishName ?? '-'));
+    columnValues.forEach((value, index) => {
+      if (index === 2) {
+        const githubCell = document.createElement('td');
+        if (value) {
+          const link = document.createElement('a');
+          link.href = `https://github.com/${value}`;
+          link.target = '_blank';
+          link.rel = 'noopener noreferrer';
+          link.className = 'list-table__link';
+          link.textContent = value;
+          githubCell.appendChild(link);
+        } else {
+          githubCell.textContent = '-';
+        }
+        row.appendChild(githubCell);
+      } else {
+        row.appendChild(createTextCell(value));
+      }
+    });
 
-    const githubCell = document.createElement('td');
-    if (member.github) {
-      const link = document.createElement('a');
-      link.href = `https://github.com/${member.github}`;
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-      link.className = 'list-table__link';
-      link.textContent = member.github;
-      githubCell.appendChild(link);
-    } else {
-      githubCell.textContent = '-';
-    }
-    row.appendChild(githubCell);
-
-    row.appendChild(createTextCell(genderLabel[member.gender] ?? member.gender ?? '-'));
-    row.appendChild(createTextCell(member.role ?? '-'));
-    row.appendChild(
-      createTextCell(
-        member.codeReviewGroup !== undefined && member.codeReviewGroup !== null
-          ? String(member.codeReviewGroup)
-          : '-',
-      ),
-    );
-    row.appendChild(
-      createTextCell(
-        member.age !== undefined && member.age !== null ? String(member.age) : '-',
-      ),
-    );
-
-    tableBody.appendChild(row);
+    fragment.appendChild(row);
   });
+
+  tableBody.appendChild(fragment);
 
   syncSelectionState();
 }

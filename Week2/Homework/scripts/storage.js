@@ -15,7 +15,6 @@ export const getMembers = () => {
     const parsed = JSON.parse(stored);
     return Array.isArray(parsed) ? parsed : [];
   } catch (error) {
-    console.error('Failed to parse members from storage', error);
     return [];
   }
 };
