@@ -94,7 +94,8 @@ export function syncSelectionState() {
 
   if (selectAll) {
     selectAll.checked = hasMembers && checkedCount === checkboxes.length;
-    selectAll.indeterminate = false;
+    selectAll.indeterminate =
+      checkedCount > 0 && checkedCount < checkboxes.length;
   }
 
   if (deleteButton) {

@@ -12,6 +12,16 @@ const elements = {
   filterReset: null,
 };
 
+const MODAL_FIELDS = Object.freeze({
+  name: 'modal-name',
+  englishName: 'modal-english-name',
+  github: 'modal-github',
+  gender: 'modal-gender',
+  role: 'modal-role',
+  team: 'modal-team',
+  age: 'modal-age',
+});
+
 const cacheElements = () => {
   elements.modal = document.getElementById('member-modal');
   elements.modalForm = document.querySelector('.modal-form');
@@ -31,10 +41,27 @@ const parseNumberValue = (value) => {
   return Number.isFinite(num) ? num : null;
 };
 
+const getModalFieldValue = (formData, key) => {
+  const fieldName = MODAL_FIELDS[key];
+  if (!fieldName) return '';
+  return getTrimmedValue(formData, fieldName);
+};
+
+const getModalSelectValue = (formData, key) => {
+  const fieldName = MODAL_FIELDS[key];
+  if (!fieldName) return '';
+  return formData.get(fieldName)?.toString() ?? '';
+};
+
 const getMemberCheckboxes = () =>
   elements.tableBody
     ? Array.from(elements.tableBody.querySelectorAll('.member-checkbox'))
     : [];
+
+const refreshMembers = (list = getMembers()) => {
+  renderMembers(list);
+  syncSelectionState();
+};
 
 const handleAddMember = (event) => {
   event.preventDefault();
@@ -42,13 +69,13 @@ const handleAddMember = (event) => {
   const form = event.currentTarget;
   const formData = new FormData(form);
 
-  const name = getTrimmedValue(formData, 'modal-name');
-  const englishName = getTrimmedValue(formData, 'modal-english-name');
-  const github = getTrimmedValue(formData, 'modal-github');
-  const gender = formData.get('modal-gender')?.toString();
-  const role = formData.get('modal-role')?.toString();
-  const team = getTrimmedValue(formData, 'modal-team');
-  const ageValue = getTrimmedValue(formData, 'modal-age');
+  const name = getModalFieldValue(formData, 'name');
+  const englishName = getModalFieldValue(formData, 'englishName');
+  const github = getModalFieldValue(formData, 'github');
+  const gender = getModalSelectValue(formData, 'gender');
+  const role = getModalSelectValue(formData, 'role');
+  const team = getModalFieldValue(formData, 'team');
+  const ageValue = getModalFieldValue(formData, 'age');
 
   if (!name || !englishName || !github || !gender || !role || !team || !ageValue) {
     alert('모든 항목을 입력해주세요.');
@@ -79,7 +106,7 @@ const handleAddMember = (event) => {
 
   const nextMembers = [...stored, newMember];
   saveMembers(nextMembers);
-  renderMembers(nextMembers);
+  refreshMembers(nextMembers);
 
   form.reset();
   closeModalById(elements.modal);
@@ -95,7 +122,7 @@ const handleDeleteSelected = () => {
 
   const nextMembers = stored.filter((member) => !selectedIds.includes(member.id));
   saveMembers(nextMembers);
-  renderMembers(nextMembers);
+  refreshMembers(nextMembers);
 };
 
 const handleFilterSubmit = (event) => {
@@ -141,8 +168,7 @@ const handleFilterSubmit = (event) => {
     return true;
   });
 
-  renderMembers(filtered);
-  syncSelectionState();
+  refreshMembers(filtered);
 };
 
 const attachEventListeners = () => {
@@ -188,8 +214,7 @@ const attachEventListeners = () => {
   if (filterForm && filterReset) {
     filterReset.addEventListener('click', () => {
       filterForm.reset();
-      renderMembers(getMembers());
-      syncSelectionState();
+      refreshMembers();
     });
   }
 };
@@ -197,6 +222,6 @@ const attachEventListeners = () => {
 document.addEventListener('DOMContentLoaded', () => {
   cacheElements();
   seedMembers();
-  renderMembers(getMembers());
+  refreshMembers();
   attachEventListeners();
 });
