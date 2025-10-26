@@ -13,7 +13,12 @@ export const getMembers = () => {
   if (!stored) return [];
   try {
     const parsed = JSON.parse(stored);
-    return Array.isArray(parsed) ? parsed : [];
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map((member) => ({
+      ...member,
+      gender: member.gender ? member.gender.toLowerCase() : member.gender,
+      role: member.role ? member.role.toUpperCase() : member.role,
+    }));
   } catch (error) {
     return [];
   }

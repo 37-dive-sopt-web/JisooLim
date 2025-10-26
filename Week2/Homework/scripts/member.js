@@ -112,7 +112,18 @@ const handleAddMember = (event) => {
     age: ageValue,
   } = modalValues;
 
-  if (!name || !englishName || !github || !gender || !role || !team || !ageValue) {
+  const normalizedGender = gender?.toLowerCase();
+  const normalizedRole = role?.toUpperCase();
+
+  if (
+    !name ||
+    !englishName ||
+    !github ||
+    !normalizedGender ||
+    !normalizedRole ||
+    !team ||
+    !ageValue
+  ) {
     alert('모든 항목을 입력해주세요.');
     return;
   }
@@ -133,8 +144,8 @@ const handleAddMember = (event) => {
     name,
     englishName,
     github,
-    gender,
-    role,
+    gender: normalizedGender,
+    role: normalizedRole,
     codeReviewGroup,
     age,
   };
@@ -169,8 +180,8 @@ const handleFilterSubmit = (event) => {
   const name = getFilterNormalizedValue(formData, 'name');
   const englishName = getFilterNormalizedValue(formData, 'englishName');
   const github = getFilterNormalizedValue(formData, 'github');
-  const gender = getFilterSelectValue(formData, 'gender');
-  const role = getFilterSelectValue(formData, 'role');
+  const gender = getFilterSelectValue(formData, 'gender')?.toLowerCase() ?? '';
+  const role = getFilterSelectValue(formData, 'role')?.toUpperCase() ?? '';
   const teamInput = getFilterTrimmedValue(formData, 'team');
   const ageInput = getFilterTrimmedValue(formData, 'age');
   const teamNumber = parseNumberValue(teamInput);
@@ -192,8 +203,8 @@ const handleFilterSubmit = (event) => {
     if (name && !member.name?.toLowerCase().includes(name)) return false;
     if (englishName && !member.englishName?.toLowerCase().includes(englishName)) return false;
     if (github && !member.github?.toLowerCase().includes(github)) return false;
-    if (gender && gender !== member.gender) return false;
-    if (role && role !== member.role) return false;
+    if (gender && gender !== (member.gender ?? '').toLowerCase()) return false;
+    if (role && role !== (member.role ?? '').toUpperCase()) return false;
     if (teamInput) {
       if ((member.codeReviewGroup ?? null) !== teamNumber) return false;
     }
