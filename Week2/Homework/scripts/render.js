@@ -87,7 +87,10 @@ export function renderMembers(list = []) {
 export function syncSelectionState() {
   const selectAll = document.getElementById('select-all');
   const deleteButton = document.getElementById('delete-selected');
-  const checkboxes = Array.from(document.querySelectorAll('.member-checkbox'));
+  const tableBody = document.getElementById('member-table-body');
+  const checkboxes = tableBody
+    ? Array.from(tableBody.querySelectorAll('.member-checkbox'))
+    : [];
 
   const hasMembers = checkboxes.length > 0;
   const checkedCount = checkboxes.filter((checkbox) => checkbox.checked).length;

@@ -22,6 +22,16 @@ const MODAL_FIELDS = Object.freeze({
   age: 'modal-age',
 });
 
+const FILTER_FIELDS = Object.freeze({
+  name: 'name',
+  englishName: 'english-name',
+  github: 'github',
+  gender: 'gender',
+  role: 'role',
+  team: 'team',
+  age: 'age',
+});
+
 const cacheElements = () => {
   elements.modal = document.getElementById('member-modal');
   elements.modalForm = document.querySelector('.modal-form');
@@ -53,6 +63,17 @@ const getModalSelectValue = (formData, key) => {
   return formData.get(fieldName)?.toString() ?? '';
 };
 
+const getFilterRawValue = (formData, key) => {
+  const fieldName = FILTER_FIELDS[key];
+  if (!fieldName) return '';
+  const value = formData.get(fieldName);
+  return value?.toString() ?? '';
+};
+
+const getFilterTrimmedValue = (formData, key) => getFilterRawValue(formData, key).trim();
+const getFilterNormalizedValue = (formData, key) => normalizeText(getFilterRawValue(formData, key));
+const getFilterSelectValue = (formData, key) => getFilterRawValue(formData, key);
+
 const getMemberCheckboxes = () =>
   elements.tableBody
     ? Array.from(elements.tableBody.querySelectorAll('.member-checkbox'))
@@ -63,19 +84,32 @@ const refreshMembers = (list = getMembers()) => {
   syncSelectionState();
 };
 
+const extractModalValues = (formData) => ({
+  name: getModalFieldValue(formData, 'name'),
+  englishName: getModalFieldValue(formData, 'englishName'),
+  github: getModalFieldValue(formData, 'github'),
+  gender: getModalSelectValue(formData, 'gender'),
+  role: getModalSelectValue(formData, 'role'),
+  team: getModalFieldValue(formData, 'team'),
+  age: getModalFieldValue(formData, 'age'),
+});
+
 const handleAddMember = (event) => {
   event.preventDefault();
 
   const form = event.currentTarget;
   const formData = new FormData(form);
 
-  const name = getModalFieldValue(formData, 'name');
-  const englishName = getModalFieldValue(formData, 'englishName');
-  const github = getModalFieldValue(formData, 'github');
-  const gender = getModalSelectValue(formData, 'gender');
-  const role = getModalSelectValue(formData, 'role');
-  const team = getModalFieldValue(formData, 'team');
-  const ageValue = getModalFieldValue(formData, 'age');
+  const modalValues = extractModalValues(formData);
+  const {
+    name,
+    englishName,
+    github,
+    gender,
+    role,
+    team,
+    age: ageValue,
+  } = modalValues;
 
   if (!name || !englishName || !github || !gender || !role || !team || !ageValue) {
     alert('모든 항목을 입력해주세요.');
@@ -131,13 +165,13 @@ const handleFilterSubmit = (event) => {
   const form = event.currentTarget;
   const formData = new FormData(form);
 
-  const name = normalizeText(formData.get('name'));
-  const englishName = normalizeText(formData.get('english-name'));
-  const github = normalizeText(formData.get('github'));
-  const gender = formData.get('gender')?.toString();
-  const role = formData.get('role')?.toString();
-  const teamInput = getTrimmedValue(formData, 'team');
-  const ageInput = getTrimmedValue(formData, 'age');
+  const name = getFilterNormalizedValue(formData, 'name');
+  const englishName = getFilterNormalizedValue(formData, 'englishName');
+  const github = getFilterNormalizedValue(formData, 'github');
+  const gender = getFilterSelectValue(formData, 'gender');
+  const role = getFilterSelectValue(formData, 'role');
+  const teamInput = getFilterTrimmedValue(formData, 'team');
+  const ageInput = getFilterTrimmedValue(formData, 'age');
   const teamNumber = parseNumberValue(teamInput);
   const ageNumber = parseNumberValue(ageInput);
 
