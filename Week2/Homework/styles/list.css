@@ -152,7 +152,7 @@
 
 @media (max-width: var(--bp-small)) {
     .list-panel {
-        padding: 2rem
+        padding: 2rem;
     }
 
     .list-panel__header {
