@@ -1,0 +1,82 @@
+.header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1000;
+  height: 8.4rem;
+  background: var(--color-bg-surface);
+  border-bottom: 1px solid var(--color-border-subtle);
+  box-shadow: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.06);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.6rem;
+  height: 100%;
+  padding: 0 2.4rem;
+}
+
+.profile-left {
+  flex: 0 0 auto;
+}
+
+.monkey {
+  display: block;
+  width: 5.5rem;
+  height: 5.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-center {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: center;
+}
+
+.name {
+  margin: 0 0 0.6rem;
+  font-size: 2.2rem;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.greeting {
+  margin: 0;
+  font-size: 1.4rem;
+  color: var(--color-text-muted);
+}
+
+.profile-right {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 1rem;
+}
+
+.social-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  border: 1px solid var(--color-border-soft);
+  text-decoration: none;
+  background: var(--color-bg-surface);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.social-icon:hover {
+  background: var(--color-hover-sunrise);
+  transform: translateY(-0.1rem);
+}
+
+.social-icon img {
+  display: block;
+  width: 1.8rem;
+  height: 1.8rem;
+  object-fit: contain;
+}
