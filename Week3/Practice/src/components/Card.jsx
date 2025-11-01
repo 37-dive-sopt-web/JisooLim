@@ -1,7 +1,6 @@
 import * as s from './Card.module.css';
 
 const Card = ({name, github, englishName}) => {
-
   return (
     <div className={s.card}>
       <p>{name}</p>
