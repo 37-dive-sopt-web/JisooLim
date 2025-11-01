@@ -1,0 +1,155 @@
+.modal[hidden] {
+    display: none;
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(2px);
+    cursor: pointer;
+}
+
+.modal__dialog {
+    position: relative;
+    width: min(92vw, 460px);
+    background: var(--white);
+    border-radius: 16px;
+    padding: 2.8rem 2.8rem 3.2rem;
+    box-shadow: 0 2.4rem 5.2rem rgba(15, 23, 42, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    z-index: 1;
+}
+
+.modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.modal__title {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--charcoal-900);
+}
+
+.modal__close {
+    border: none;
+    background: transparent;
+    font-size: 2.4rem;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--charcoal-900);
+    transition: transform 120ms ease;
+}
+
+.modal__close:hover,
+.modal__close:focus-visible {
+    transform: scale(1.1);
+}
+
+.modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+}
+
+.modal-form__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.2rem;
+}
+
+.modal-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.modal-form__label {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: rgba(29, 42, 45, 0.86);
+}
+
+.modal-form__control {
+    width: 100%;
+    padding: 1.2rem 1.6rem;
+    border-radius: 10px;
+    border: 1px solid var(--gray-200);
+    background: var(--white);
+    font-size: 1.4rem;
+    color: var(--charcoal-900);
+    transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.modal-form__control::placeholder {
+    color: rgba(29, 42, 45, 0.5);
+}
+
+.modal-form__control:focus {
+    outline: none;
+    border-color: var(--green-80);
+    box-shadow: 0 0 0 0.2rem rgba(47, 133, 90, 0.18);
+}
+
+select.modal-form__control {
+    appearance: none;
+    cursor: pointer;
+    padding-right: 4.2rem;
+    background-image: url('../svgs/ic_arrow.svg');
+    background-repeat: no-repeat;
+    background-position: right 1.4rem center;
+}
+
+.modal-form__actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.modal-form__submit {
+    min-width: 8rem;
+    padding: 1.2rem 2rem;
+    border-radius: 10px;
+    border: none;
+    background: var(--green-50);
+    color: var(--charcoal-900);
+    font-size: 1.4rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 150ms ease, transform 150ms ease;
+}
+
+.modal-form__submit:hover,
+.modal-form__submit:focus-visible {
+    background: var(--green-60);
+    transform: translateY(-1px);
+}
+
+@media (max-width: 540px) {
+    .modal__dialog {
+        padding: 2.4rem 2.2rem 2.8rem;
+        width: min(94vw, 420px);
+    }
+
+    .modal-form__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+body[data-modal-open="true"] {
+    overflow: hidden;
+}

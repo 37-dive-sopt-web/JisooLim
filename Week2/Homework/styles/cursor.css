@@ -1,0 +1,44 @@
+.cursor-sparkle-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1000;
+}
+
+.cursor-sparkle {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    border-radius: 50%;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.9) 0%, rgba(175, 203, 255, 0.7) 40%, rgba(93, 138, 255, 0.2) 100%);
+    box-shadow: 0 0 1.8rem rgba(93, 138, 255, 0.45);
+    transform: translate(-50%, -50%) scale(0.6);
+    opacity: 0;
+    animation: cursor-sparkle-burst 520ms ease-out forwards;
+    mix-blend-mode: screen;
+}
+
+@keyframes cursor-sparkle-burst {
+    0% {
+        opacity: 0.85;
+        transform: translate(-50%, -50%) scale(0.55);
+    }
+    65% {
+        opacity: 0.95;
+        transform: translate(calc(-50% + var(--sparkle-tx, 0px)), calc(-50% + var(--sparkle-ty, 0px))) scale(var(--sparkle-scale, 1.1));
+        filter: brightness(1.2);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--sparkle-tx, 0px)), calc(-50% + var(--sparkle-ty, 0px))) scale(calc(var(--sparkle-scale, 1.1) * 0.9));
+        filter: brightness(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cursor-sparkle {
+        animation: none;
+    }
+}
