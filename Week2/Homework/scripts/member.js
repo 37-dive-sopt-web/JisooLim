@@ -1,5 +1,5 @@
 import { seedMembers, getMembers, saveMembers, getNextMemberId } from './storage.js';
-import { renderMembers, syncSelectionState } from './render.js';
+import { renderMembers, syncSelectionState, setRenderElements } from './render.js';
 import { closeModal as closeModalById } from './modal.js';
 
 const elements = {
@@ -10,6 +10,7 @@ const elements = {
   deleteButton: null,
   filterForm: null,
   filterReset: null,
+  emptyState: null,
 };
 
 const MODAL_FIELDS = Object.freeze({
@@ -40,11 +41,10 @@ const cacheElements = () => {
   elements.deleteButton = document.getElementById('delete-selected');
   elements.filterForm = document.getElementById('member-filter-form');
   elements.filterReset = document.getElementById('filter-reset');
+  elements.emptyState = document.getElementById('member-empty-state');
 };
 
 const toTrimmedString = (value) => value?.toString().trim() ?? '';
-const normalizeText = (value) => toTrimmedString(value).toLowerCase();
-const getTrimmedValue = (formData, key) => toTrimmedString(formData.get(key));
 const parseNumberValue = (value) => {
   const trimmed = toTrimmedString(value);
   if (!trimmed) return null;
@@ -52,28 +52,26 @@ const parseNumberValue = (value) => {
   return Number.isFinite(num) ? num : null;
 };
 
-const getModalFieldValue = (formData, key) => {
-  const fieldName = MODAL_FIELDS[key];
+const getFormValue = (
+  formData,
+  fieldMap,
+  key,
+  { trim = false, normalize = false } = {},
+) => {
+  const fieldName = fieldMap[key];
   if (!fieldName) return '';
-  return getTrimmedValue(formData, fieldName);
-};
+  const rawValue = formData.get(fieldName);
+  if (rawValue === null || rawValue === undefined) return '';
 
-const getModalSelectValue = (formData, key) => {
-  const fieldName = MODAL_FIELDS[key];
-  if (!fieldName) return '';
-  return formData.get(fieldName)?.toString() ?? '';
+  let value = rawValue.toString();
+  if (trim) {
+    value = value.trim();
+  }
+  if (normalize) {
+    value = value.toLowerCase();
+  }
+  return value;
 };
-
-const getFilterRawValue = (formData, key) => {
-  const fieldName = FILTER_FIELDS[key];
-  if (!fieldName) return '';
-  const value = formData.get(fieldName);
-  return value?.toString() ?? '';
-};
-
-const getFilterTrimmedValue = (formData, key) => getFilterRawValue(formData, key).trim();
-const getFilterNormalizedValue = (formData, key) => normalizeText(getFilterRawValue(formData, key));
-const getFilterSelectValue = (formData, key) => getFilterRawValue(formData, key);
 
 const getMemberCheckboxes = () =>
   elements.tableBody
@@ -86,13 +84,15 @@ const refreshMembers = (list = getMembers()) => {
 };
 
 const extractModalValues = (formData) => ({
-  name: getModalFieldValue(formData, 'name'),
-  englishName: getModalFieldValue(formData, 'englishName'),
-  github: getModalFieldValue(formData, 'github'),
-  gender: getModalSelectValue(formData, 'gender'),
-  role: getModalSelectValue(formData, 'role'),
-  team: getModalFieldValue(formData, 'team'),
-  age: getModalFieldValue(formData, 'age'),
+  name: getFormValue(formData, MODAL_FIELDS, 'name', { trim: true }),
+  englishName: getFormValue(formData, MODAL_FIELDS, 'englishName', {
+    trim: true,
+  }),
+  github: getFormValue(formData, MODAL_FIELDS, 'github', { trim: true }),
+  gender: getFormValue(formData, MODAL_FIELDS, 'gender'),
+  role: getFormValue(formData, MODAL_FIELDS, 'role'),
+  team: getFormValue(formData, MODAL_FIELDS, 'team', { trim: true }),
+  age: getFormValue(formData, MODAL_FIELDS, 'age', { trim: true }),
 });
 
 const handleAddMember = (event) => {
@@ -133,6 +133,10 @@ const handleAddMember = (event) => {
 
   if (age === null || codeReviewGroup === null) {
     alert('금잔디조와 나이는 숫자로 입력해주세요.');
+    return;
+  }
+  if (codeReviewGroup < 1 || codeReviewGroup > 9) {
+    alert('금잔디조는 1~9 사이 숫자여야 합니다.');
     return;
   }
 
@@ -177,13 +181,29 @@ const handleFilterSubmit = (event) => {
   const form = event.currentTarget;
   const formData = new FormData(form);
 
-  const name = getFilterNormalizedValue(formData, 'name');
-  const englishName = getFilterNormalizedValue(formData, 'englishName');
-  const github = getFilterNormalizedValue(formData, 'github');
-  const gender = getFilterSelectValue(formData, 'gender')?.toLowerCase() ?? '';
-  const role = getFilterSelectValue(formData, 'role')?.toUpperCase() ?? '';
-  const teamInput = getFilterTrimmedValue(formData, 'team');
-  const ageInput = getFilterTrimmedValue(formData, 'age');
+  const name = getFormValue(formData, FILTER_FIELDS, 'name', {
+    trim: true,
+    normalize: true,
+  });
+  const englishName = getFormValue(formData, FILTER_FIELDS, 'englishName', {
+    trim: true,
+    normalize: true,
+  });
+  const github = getFormValue(formData, FILTER_FIELDS, 'github', {
+    trim: true,
+    normalize: true,
+  });
+  const gender = getFormValue(formData, FILTER_FIELDS, 'gender', {
+    normalize: true,
+  });
+  const roleRaw = getFormValue(formData, FILTER_FIELDS, 'role');
+  const teamInput = getFormValue(formData, FILTER_FIELDS, 'team', {
+    trim: true,
+  });
+  const ageInput = getFormValue(formData, FILTER_FIELDS, 'age', {
+    trim: true,
+  });
+  const role = roleRaw?.toUpperCase() ?? '';
   const teamNumber = parseNumberValue(teamInput);
   const ageNumber = parseNumberValue(ageInput);
 
@@ -241,6 +261,7 @@ const attachEventListeners = () => {
       checkboxes.forEach((checkbox) => {
         checkbox.checked = selectAll.checked;
       });
+      selectAll.indeterminate = false;
       syncSelectionState();
     });
   }
@@ -267,6 +288,7 @@ const attachEventListeners = () => {
 
 document.addEventListener('DOMContentLoaded', () => {
   cacheElements();
+  setRenderElements(elements);
   seedMembers();
   refreshMembers();
   attachEventListeners();

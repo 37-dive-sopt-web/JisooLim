@@ -3,11 +3,23 @@ const genderLabel = {
   male: '남자',
 };
 
+const renderElements = {
+  tableBody: null,
+  selectAll: null,
+  deleteButton: null,
+  emptyState: null,
+};
+
+export function setRenderElements(refs = {}) {
+  renderElements.tableBody = refs.tableBody ?? renderElements.tableBody;
+  renderElements.selectAll = refs.selectAll ?? renderElements.selectAll;
+  renderElements.deleteButton =
+    refs.deleteButton ?? renderElements.deleteButton;
+  renderElements.emptyState = refs.emptyState ?? renderElements.emptyState;
+}
+
 export function renderMembers(list = []) {
-  const tableBody = document.getElementById('member-table-body');
-  const selectAll = document.getElementById('select-all');
-  const deleteButton = document.getElementById('delete-selected');
-  const emptyState = document.getElementById('member-empty-state');
+  const { tableBody, selectAll, deleteButton, emptyState } = renderElements;
   if (!tableBody) return;
 
   tableBody.innerHTML = '';
@@ -39,6 +51,16 @@ export function renderMembers(list = []) {
     return cell;
   };
 
+  const TABLE_KEYS = [
+    'name',
+    'englishName',
+    'github',
+    'gender',
+    'role',
+    'codeReviewGroup',
+    'age',
+  ];
+
   list.forEach((member) => {
     const row = document.createElement('tr');
     row.dataset.memberId = String(member.id ?? '');
@@ -52,35 +74,35 @@ export function renderMembers(list = []) {
     checkboxCell.appendChild(checkbox);
     row.appendChild(checkboxCell);
 
-    const columnValues = [
-      member.name ?? '-',
-      member.englishName ?? '-',
-      member.github,
-      genderLabel[member.gender] ?? member.gender ?? '-',
-      member.role ?? '-',
-      member.codeReviewGroup !== undefined && member.codeReviewGroup !== null
-        ? String(member.codeReviewGroup)
-        : '-',
-      member.age !== undefined && member.age !== null ? String(member.age) : '-',
-    ];
+    TABLE_KEYS.forEach((key) => {
+      const value = member[key];
 
-    columnValues.forEach((value, index) => {
-      if (index === 2) {
-        const githubCell = document.createElement('td');
-        if (value) {
-          const link = document.createElement('a');
-          link.href = `https://github.com/${value}`;
-          link.target = '_blank';
-          link.rel = 'noopener noreferrer';
-          link.className = 'list-table__link';
-          link.textContent = value;
-          githubCell.appendChild(link);
-        } else {
-          githubCell.textContent = '-';
+      switch (key) {
+        case 'github': {
+          const cell = document.createElement('td');
+          if (value) {
+            const link = document.createElement('a');
+            link.href = `https://github.com/${value}`;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.className = 'list-table__link';
+            link.textContent = value;
+            cell.appendChild(link);
+          } else {
+            cell.textContent = '-';
+          }
+          row.appendChild(cell);
+          break;
         }
-        row.appendChild(githubCell);
-      } else {
-        row.appendChild(createTextCell(value));
+
+        case 'gender': {
+          const label = genderLabel[value] ?? value ?? '-';
+          row.appendChild(createTextCell(label));
+          break;
+        }
+
+        default:
+          row.appendChild(createTextCell(value));
       }
     });
 
@@ -93,9 +115,7 @@ export function renderMembers(list = []) {
 }
 
 export function syncSelectionState() {
-  const selectAll = document.getElementById('select-all');
-  const deleteButton = document.getElementById('delete-selected');
-  const tableBody = document.getElementById('member-table-body');
+  const { selectAll, deleteButton, tableBody } = renderElements;
   const checkboxes = tableBody
     ? Array.from(tableBody.querySelectorAll('.member-checkbox'))
     : [];

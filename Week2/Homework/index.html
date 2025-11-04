@@ -96,7 +96,7 @@
         </section>
     </main>
     <!-- 멤버 추가 모달 -->
-    <div class="modal" id="member-modal" aria-labelledby="member-modal-title" aria-hidden="true" hidden>
+    <div class="modal" id="member-modal" role="dialog" aria-modal="true" aria-labelledby="member-modal-title" aria-hidden="true" hidden>
         <div class="modal__backdrop" data-modal-close></div>
         <div class="modal__dialog">
             <header class="modal__header">
@@ -133,7 +133,7 @@
                 <div class="modal-form__grid">
                     <div class="modal-form__field">
                         <label class="modal-form__label" for="modal-team">금잔디조</label>
-                        <input class="modal-form__control" type="text" id="modal-team" name="modal-team" placeholder="금잔디조를 입력하세요 (1~9)">
+                        <input class="modal-form__control" type="number" id="modal-team" name="modal-team" placeholder="금잔디조를 입력하세요 (1~9)" min="1" max="9">
                     </div>
                     <div class="modal-form__field">
                         <label class="modal-form__label" for="modal-age">나이</label>
