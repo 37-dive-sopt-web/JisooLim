@@ -1,11 +1,11 @@
-import dropdownIcon from '../assets/svgs/ic_downarrow.svg';
+import IcDownarrow from '../assets/svgs/icDownarrow.jsx';
 
 const statusMessages = {
-  idle: '카드를 눌러 게임을 시작하세요',
-  success: '성공!🤩',
-  failure: '실패!😞',
-  resolving: '잠시만 기다려 주세요..',
-  duplicate: '이미 선택한 카드에요😮',
+  idle: '카드를 눌러 게임을 시작',
+  success: '성공 !',
+  failure: '실패 !',
+  resolving: '뒤집힌 시간동안은 잠시만 기다려 주세요..',
+  duplicate: '이미 선택한 카드에요 😮',
 };
 
 const GameSidebar = ({
@@ -39,11 +39,9 @@ const GameSidebar = ({
             </option>
           ))}
         </select>
-        <img
-          src={dropdownIcon}
-          alt=""
+        <IcDownarrow
           aria-hidden="true"
-          className="pointer-events-none absolute inset-y-0 right-4 my-auto h-4 w-4"
+          className="pointer-events-none absolute inset-y-0 right-4 my-auto h-4 w-4 text-(--gray)"
         />
       </div>
       <div className="grid grid-cols-3 gap-4">
@@ -63,7 +61,7 @@ const GameSidebar = ({
         </div>
       </div>
       <div className="rounded-xl bg-white/70 p-4">
-        <p className="mt-3 rounded-xl bg-white px-4 py-3 text-m font-semibold text-(--black)">
+        <p className="mt-3 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-(--black)">
           {statusMessage}
         </p>
       </div>

@@ -130,7 +130,7 @@ const GameBoard = ({
             type="button"
             aria-pressed={isFlipped}
             onClick={() => handleCardClick(index)}
-            className={`relative aspect-square overflow-hidden rounded-xl focus-visible:outline-4 focus-visible:outline-(--card-outline) ${
+            className={`relative aspect-square overflow-hidden rounded-xl focus-visible:outline focus-visible:outline-(--card-outline) ${
               isMatched ? 'cursor-default opacity-95' : 'cursor-pointer'
             }`}
           >
