@@ -1,16 +1,93 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Header from './components/Header.jsx';
 import GameBoard from './components/GameBoard.jsx';
 import GameSidebar from './components/GameSidebar.jsx';
 
+const LEVELS = [
+  {
+    id: 'level1',
+    label: 'Level 1',
+    rows: 4,
+    columns: 4,
+    pairs: 8,
+    timeLimit: 45,
+  },
+  {
+    id: 'level2',
+    label: 'Level 2',
+    rows: 4,
+    columns: 6,
+    pairs: 12,
+    timeLimit: 60,
+  },
+  {
+    id: 'level3',
+    label: 'Level 3',
+    rows: 6,
+    columns: 6,
+    pairs: 18,
+    timeLimit: 100,
+  },
+];
+
 const App = () => {
   const [activeTab, setActiveTab] = useState('game');
   const [boardResetToken, setBoardResetToken] = useState(0);
+  const [selectedLevelId, setSelectedLevelId] = useState(LEVELS[0].id);
+  const [matchedPairs, setMatchedPairs] = useState(0);
+  const [timerActive, setTimerActive] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(LEVELS[0].timeLimit);
 
+  const selectedLevel =
+    LEVELS.find((level) => level.id === selectedLevelId) ?? LEVELS[0];
+  const totalPairs = (selectedLevel.rows * selectedLevel.columns) / 2;
+  const remainingPairs = Math.max(totalPairs - matchedPairs, 0);
   const headingText = activeTab === 'game' ? '게임 보드' : '랭킹 보드';
 
   const handleBoardReset = () => {
     setBoardResetToken((prev) => prev + 1);
+    setMatchedPairs(0);
+    setTimerActive(false);
+    setTimeLeft(selectedLevel.timeLimit);
+  };
+
+  const handleLevelChange = (nextLevelId) => {
+    const targetLevel = LEVELS.find((level) => level.id === nextLevelId) ?? LEVELS[0];
+    setSelectedLevelId(nextLevelId);
+    setBoardResetToken((prev) => prev + 1);
+    setMatchedPairs(0);
+    setTimerActive(false);
+    setTimeLeft(targetLevel.timeLimit);
+  };
+
+  useEffect(() => {
+    if (matchedPairs === totalPairs && totalPairs > 0) {
+      setTimerActive(false);
+    }
+  }, [matchedPairs, totalPairs]);
+
+  useEffect(() => {
+    if (!timerActive) {
+      return undefined;
+    }
+
+    const intervalId = setInterval(() => {
+      setTimeLeft((prev) => {
+        const nextValue = Math.max(0, Number((prev - 0.1).toFixed(2)));
+        if (nextValue === 0) {
+          setTimerActive(false);
+        }
+        return nextValue;
+      });
+    }, 100);
+
+    return () => clearInterval(intervalId);
+  }, [timerActive]);
+
+  const handleFirstFlip = () => {
+    if (!timerActive && timeLeft > 0) {
+      setTimerActive(true);
+    }
   };
 
   return (
@@ -35,11 +112,28 @@ const App = () => {
                   </button>
                 </div>
                 <div className="w-full max-w-[520px]">
-                  <GameBoard resetToken={boardResetToken} />
+                  <GameBoard
+                    resetToken={boardResetToken}
+                    rows={selectedLevel.rows}
+                    columns={selectedLevel.columns}
+                    onMatchChange={setMatchedPairs}
+                    onFirstFlip={handleFirstFlip}
+                    isLocked={timeLeft <= 0}
+                  />
                 </div>
               </div>
               <div className="w-full lg:w-[480px]">
-                <GameSidebar />
+                <GameSidebar
+                  levels={LEVELS}
+                  selectedLevelId={selectedLevelId}
+                  onLevelChange={handleLevelChange}
+                  stats={{
+                    totalPairs,
+                    matchedPairs,
+                    remainingPairs,
+                    timeLeft,
+                  }}
+                />
               </div>
             </div>
           ) : (

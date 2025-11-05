@@ -1,42 +1,57 @@
 import { useEffect, useRef, useState } from 'react';
 
-const TOTAL_CARDS = 16;
+const createShuffledPairs = (totalCards) => {
+  const pairCount = totalCards / 2;
+  const baseValues = Array.from({ length: pairCount }, (_, index) => index + 1);
+  const deck = [...baseValues, ...baseValues];
 
-const createShuffledPairs = () => {
-  const baseValues = Array.from({ length: TOTAL_CARDS / 2 }, (_, index) => index + 1);
-  const pairedValues = [...baseValues, ...baseValues];
-
-  for (let i = pairedValues.length - 1; i > 0; i -= 1) {
+  for (let i = deck.length - 1; i > 0; i -= 1) {
     const swapIndex = Math.floor(Math.random() * (i + 1));
-    [pairedValues[i], pairedValues[swapIndex]] = [pairedValues[swapIndex], pairedValues[i]];
+    [deck[i], deck[swapIndex]] = [deck[swapIndex], deck[i]];
   }
 
-  return pairedValues;
+  return deck;
 };
 
-const GameBoard = ({ resetToken = 0 }) => {
-  const [cardValues, setCardValues] = useState(() => createShuffledPairs());
-  const [flipped, setFlipped] = useState(Array(TOTAL_CARDS).fill(false));
-  const [matched, setMatched] = useState(Array(TOTAL_CARDS).fill(false));
+const GameBoard = ({
+  resetToken = 0,
+  rows = 4,
+  columns = 4,
+  onMatchChange,
+  onFirstFlip,
+  isLocked = false,
+}) => {
+  const totalCards = rows * columns;
+  const [cardValues, setCardValues] = useState(() => createShuffledPairs(totalCards));
+  const [flipped, setFlipped] = useState(() => Array(totalCards).fill(false));
+  const [matched, setMatched] = useState(() => Array(totalCards).fill(false));
   const [activeIndices, setActiveIndices] = useState([]);
   const [isResolving, setIsResolving] = useState(false);
   const hideTimeoutRef = useRef(null);
+  const [hasStarted, setHasStarted] = useState(false);
 
   useEffect(() => {
     if (hideTimeoutRef.current) {
       clearTimeout(hideTimeoutRef.current);
       hideTimeoutRef.current = null;
     }
-    setCardValues(createShuffledPairs());
-    setFlipped(Array(TOTAL_CARDS).fill(false));
-    setMatched(Array(TOTAL_CARDS).fill(false));
+    setCardValues(createShuffledPairs(totalCards));
+    setFlipped(Array(totalCards).fill(false));
+    setMatched(Array(totalCards).fill(false));
     setActiveIndices([]);
     setIsResolving(false);
-  }, [resetToken]);
+    onMatchChange?.(0);
+    setHasStarted(false);
+  }, [resetToken, totalCards, onMatchChange]);
 
   const handleCardClick = (index) => {
-    if (matched[index] || isResolving || activeIndices.includes(index)) {
+    if (isLocked || matched[index] || isResolving || activeIndices.includes(index)) {
       return;
+    }
+
+    if (!hasStarted) {
+      setHasStarted(true);
+      onFirstFlip?.();
     }
 
     setFlipped((prev) =>
@@ -54,11 +69,14 @@ const GameBoard = ({ resetToken = 0 }) => {
     const isMatch = cardValues[firstIndex] === cardValues[secondIndex];
 
     if (isMatch) {
-      setMatched((prev) =>
-        prev.map((isMatched, cardIndex) =>
+      setMatched((prev) => {
+        const next = prev.map((isMatched, cardIndex) =>
           cardIndex === firstIndex || cardIndex === secondIndex ? true : isMatched,
-        ),
-      );
+        );
+        const matchedPairsCount = next.filter(Boolean).length / 2;
+        onMatchChange?.(matchedPairsCount);
+        return next;
+      });
       setActiveIndices([]);
       return;
     }
@@ -73,7 +91,7 @@ const GameBoard = ({ resetToken = 0 }) => {
       setActiveIndices([]);
       setIsResolving(false);
       hideTimeoutRef.current = null;
-    }, 900);
+    }, 600);
   };
 
   useEffect(
@@ -86,7 +104,10 @@ const GameBoard = ({ resetToken = 0 }) => {
   );
 
   return (
-    <div className="grid w-full grid-cols-4 gap-3">
+    <div
+      className="grid w-full gap-3"
+      style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
+    >
       {cardValues.map((value, index) => {
         const isFlipped = flipped[index];
         const isMatched = matched[index];
@@ -97,7 +118,7 @@ const GameBoard = ({ resetToken = 0 }) => {
             type="button"
             aria-pressed={isFlipped}
             onClick={() => handleCardClick(index)}
-            className={`relative aspect-square overflow-hidden rounded-xl focus-visible:outline focus-visible:outline-(--card-outline) ${
+            className={`relative aspect-square overflow-hidden rounded-xl focus-visible:outline-4 focus-visible:outline-(--card-outline) ${
               isMatched ? 'cursor-default opacity-95' : 'cursor-pointer'
             }`}
           >
