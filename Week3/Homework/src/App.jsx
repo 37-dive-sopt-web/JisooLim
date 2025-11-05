@@ -5,39 +5,16 @@ import GameBoard from './components/GameBoard.jsx';
 import GameSidebar from './components/GameSidebar.jsx';
 import GameResultModal from './components/GameResultModal.jsx';
 import RankingBoard from './components/RankingBoard.jsx';
-
-const LEVELS = [
-  {
-    id: 'level1',
-    label: 'Level 1',
-    rows: 4,
-    columns: 4,
-    pairs: 8,
-    timeLimit: 45,
-  },
-  {
-    id: 'level2',
-    label: 'Level 2',
-    rows: 4,
-    columns: 6,
-    pairs: 12,
-    timeLimit: 60,
-  },
-  {
-    id: 'level3',
-    label: 'Level 3',
-    rows: 6,
-    columns: 6,
-    pairs: 18,
-    timeLimit: 100,
-  },
-];
-
-const RANKING_STORAGE_KEY = 'memory-game-ranking';
-const LEVEL_ORDER = LEVELS.reduce((accumulator, level, index) => {
-  accumulator[level.id] = index;
-  return accumulator;
-}, {});
+import {
+  LEVELS,
+  LEVEL_ORDER,
+  RANKING_STORAGE_KEY,
+} from './constants/gameConfig.js';
+import {
+  CONFETTI_BASE_OPTIONS,
+  CONFETTI_BURSTS,
+  CONFETTI_INTERVAL_MS,
+} from './constants/effects.js';
 
 const App = () => {
   const [activeTab, setActiveTab] = useState('game');
@@ -293,36 +270,21 @@ const App = () => {
     }
 
     const fireConfetti = () => {
-      const baseOptions = {
-        particleCount: 80,
-        spread: 70,
-        origin: { y: 0.6 },
-      };
-
       const rootStyles = getComputedStyle(document.documentElement);
-      const colors1 = [
-        rootStyles.getPropertyValue('--green').trim(),
-        rootStyles.getPropertyValue('--card-back').trim(),
-      ];
-      const colors2 = [
-        rootStyles.getPropertyValue('--peach').trim(),
-        rootStyles.getPropertyValue('--card-back').trim(),
-      ];
-
-      confetti({
-        ...baseOptions,
-        angle: 60,
-        colors: colors1,
-      });
-      confetti({
-        ...baseOptions,
-        angle: 120,
-        colors: colors2,
+      CONFETTI_BURSTS.forEach(({ angle, colorVars }) => {
+        const colors = colorVars.map((variableName) =>
+          rootStyles.getPropertyValue(variableName).trim(),
+        );
+        confetti({
+          ...CONFETTI_BASE_OPTIONS,
+          angle,
+          colors,
+        });
       });
     };
 
     fireConfetti();
-    const followUpTimeout = setTimeout(fireConfetti, 500);
+    const followUpTimeout = setTimeout(fireConfetti, CONFETTI_INTERVAL_MS);
 
     return () => {
       clearTimeout(followUpTimeout);
