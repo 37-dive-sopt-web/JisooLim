@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react';
-import confetti from 'canvas-confetti';
 import Header from './components/Header.jsx';
 import GameBoard from './components/GameBoard.jsx';
 import GameSidebar from './components/GameSidebar.jsx';
@@ -10,13 +9,8 @@ import {
   LEVEL_ORDER,
   RANKING_STORAGE_KEY,
 } from './constants/gameConfig.js';
-import {
-  CONFETTI_BASE_OPTIONS,
-  CONFETTI_BURSTS,
-  CONFETTI_INTERVAL_MS,
-} from './constants/effects.js';
 import { generateClientId } from './utils/id.js';
-import { sortRecordsByTime as sortRankingRecordsByTime } from './utils/ranking.js';
+import { useRankingRecords, useResultModalEffects } from './hooks/index.js';
 
 const App = () => {
   const [activeTab, setActiveTab] = useState('game');
@@ -29,7 +23,6 @@ const App = () => {
   const [flipHistory, setFlipHistory] = useState([]);
   const [resultModal, setResultModal] = useState(null);
   const [modalCountdown, setModalCountdown] = useState(3);
-  const [rankingRecords, setRankingRecords] = useState([]);
   const [hasRecordedResult, setHasRecordedResult] = useState(false);
 
   const selectedLevel =
@@ -38,77 +31,15 @@ const App = () => {
   const remainingPairs = Math.max(totalPairs - matchedPairs, 0);
   const headingText = activeTab === 'game' ? '게임 보드' : '랭킹 보드';
 
-  const addRankingRecord = useCallback(
-    (record) => {
-      setRankingRecords((prev) =>
-        sortRankingRecordsByTime([...prev, record], LEVEL_ORDER),
-      );
-    },
-    [],
-  );
-
-  const handleResetRecords = useCallback(() => {
-    setRankingRecords([]);
-    if (typeof window !== 'undefined') {
-      window.localStorage.removeItem(RANKING_STORAGE_KEY);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    try {
-      const storedValue = window.localStorage.getItem(RANKING_STORAGE_KEY);
-      if (!storedValue) {
-        return;
-      }
-
-      const parsed = JSON.parse(storedValue);
-      if (!Array.isArray(parsed)) {
-        return;
-      }
-
-      const normalized = parsed
-        .map((record) => {
-          const levelId = record.levelId;
-          const levelMeta = LEVELS.find((level) => level.id === levelId);
-          return {
-            id: record.id ?? generateClientId(),
-            levelId,
-            levelLabel: record.levelLabel ?? levelMeta?.label ?? levelId,
-            clearSeconds: Number.isFinite(Number(record.clearSeconds))
-              ? Number(Number(record.clearSeconds).toFixed(2))
-              : 0,
-            timestamp: record.timestamp ?? new Date().toISOString(),
-          };
-        })
-        .filter((record) => Boolean(record.levelId));
-
-      setRankingRecords(
-        sortRankingRecordsByTime(normalized, LEVEL_ORDER),
-      );
-    } catch (error) {
-      console.error('랭킹 데이터를 불러오는 중 문제가 발생했어요.', error);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    if (rankingRecords.length === 0) {
-      window.localStorage.removeItem(RANKING_STORAGE_KEY);
-      return;
-    }
-
-    window.localStorage.setItem(
-      RANKING_STORAGE_KEY,
-      JSON.stringify(rankingRecords),
-    );
-  }, [rankingRecords]);
+  const {
+    records: rankingRecords,
+    addRecord: addRankingRecord,
+    resetRecords: resetRankingRecords,
+  } = useRankingRecords({
+    storageKey: RANKING_STORAGE_KEY,
+    levels: LEVELS,
+    levelOrder: LEVEL_ORDER,
+  });
 
   const resetGameState = useCallback((level) => {
     setBoardResetToken((prev) => prev + 1);
@@ -222,52 +153,15 @@ const App = () => {
     });
   };
 
-  useEffect(() => {
-    if (!resultModal) {
-      setModalCountdown(3);
-      return undefined;
-    }
+  const handleAutoReset = useCallback(() => {
+    resetGameState(selectedLevel);
+  }, [resetGameState, selectedLevel]);
 
-    setModalCountdown(3);
-    const countdownInterval = setInterval(() => {
-      setModalCountdown((prev) => (prev > 1 ? prev - 1 : prev));
-    }, 1000);
-    const autoResetTimeout = setTimeout(() => {
-      resetGameState(selectedLevel);
-    }, 3000);
-
-    return () => {
-      clearInterval(countdownInterval);
-      clearTimeout(autoResetTimeout);
-    };
-  }, [resultModal, resetGameState, selectedLevel]);
-
-  useEffect(() => {
-    if (!resultModal || resultModal.type !== 'success') {
-      return undefined;
-    }
-
-    const fireConfetti = () => {
-      const rootStyles = getComputedStyle(document.documentElement);
-      CONFETTI_BURSTS.forEach(({ angle, colorVars }) => {
-        const colors = colorVars.map((variableName) =>
-          rootStyles.getPropertyValue(variableName).trim(),
-        );
-        confetti({
-          ...CONFETTI_BASE_OPTIONS,
-          angle,
-          colors,
-        });
-      });
-    };
-
-    fireConfetti();
-    const followUpTimeout = setTimeout(fireConfetti, CONFETTI_INTERVAL_MS);
-
-    return () => {
-      clearTimeout(followUpTimeout);
-    };
-  }, [resultModal]);
+  useResultModalEffects({
+    resultModal,
+    setModalCountdown,
+    onAutoReset: handleAutoReset,
+  });
 
   return (
     <div className="min-h-screen bg-(--gray-extra-light)">
@@ -323,7 +217,7 @@ const App = () => {
             <div className="mt-8 min-h-[520px]">
               <RankingBoard
                 records={rankingRecords}
-                onReset={handleResetRecords}
+                onReset={resetRankingRecords}
               />
             </div>
           )}
