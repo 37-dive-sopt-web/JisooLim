@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 export const useGameCompletion = ({
   matchedPairs,
@@ -7,6 +7,12 @@ export const useGameCompletion = ({
   timeLeft,
   onComplete,
 }) => {
+  const onCompleteRef = useRef(onComplete);
+
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
+
   useEffect(() => {
     if (matchedPairs === totalPairs && totalPairs > 0) {
       const rawTimeTaken = selectedLevel.timeLimit - timeLeft;
@@ -14,7 +20,7 @@ export const useGameCompletion = ({
         0,
         Number(Number(rawTimeTaken).toFixed(2)),
       );
-      onComplete?.(timeTaken);
+      onCompleteRef.current?.(timeTaken);
     }
-  }, [matchedPairs, totalPairs, selectedLevel, timeLeft, onComplete]);
+  }, [matchedPairs, totalPairs, selectedLevel, timeLeft]);
 };

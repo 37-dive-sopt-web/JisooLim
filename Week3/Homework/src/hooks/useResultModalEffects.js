@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import {
   CONFETTI_BASE_OPTIONS,
@@ -12,6 +12,12 @@ export const useResultModalEffects = ({
   onAutoReset,
   autoResetDelay = 3000,
 }) => {
+  const autoResetRef = useRef(onAutoReset);
+
+  useEffect(() => {
+    autoResetRef.current = onAutoReset;
+  }, [onAutoReset]);
+
   useEffect(() => {
     if (!resultModal) {
       setModalCountdown?.(3);
@@ -25,14 +31,14 @@ export const useResultModalEffects = ({
     }, 1000);
 
     const autoResetTimeout = setTimeout(() => {
-      onAutoReset?.();
+      autoResetRef.current?.();
     }, autoResetDelay);
 
     return () => {
       clearInterval(countdownInterval);
       clearTimeout(autoResetTimeout);
     };
-  }, [autoResetDelay, onAutoReset, resultModal, setModalCountdown]);
+  }, [autoResetDelay, resultModal, setModalCountdown]);
 
   useEffect(() => {
     if (!resultModal || resultModal.type !== 'success') {

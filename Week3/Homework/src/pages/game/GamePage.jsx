@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import GameBoard from './components/GameBoard.jsx';
 import GameResultModal from './components/GameResultModal.jsx';
 import { LEVELS } from '@/constants/gameConfig.js';
@@ -19,10 +19,8 @@ const GamePage = ({ onAddRecord }) => {
   const [modalCountdown, setModalCountdown] = useState(3);
   const [hasRecordedResult, setHasRecordedResult] = useState(false);
 
-  const selectedLevel = useMemo(
-    () => LEVELS.find((level) => level.id === selectedLevelId) ?? LEVELS[0],
-    [selectedLevelId],
-  );
+  const selectedLevel =
+    LEVELS.find((level) => level.id === selectedLevelId) ?? LEVELS[0];
 
   const totalPairs = (selectedLevel.rows * selectedLevel.columns) / 2;
   const remainingPairs = Math.max(totalPairs - matchedPairs, 0);
@@ -46,24 +44,21 @@ const GamePage = ({ onAddRecord }) => {
     resetTimer(selectedLevel.timeLimit);
   }, [resetTimer, selectedLevel.timeLimit]);
 
-  const resetGameState = useCallback(
-    (level) => {
-      setBoardResetToken((prev) => prev + 1);
-      setMatchedPairs(0);
-      stopTimer();
-      resetTimer(level.timeLimit);
-      setStatus('idle');
-      resetHistory();
-      setResultModal(null);
-      setModalCountdown(3);
-      setHasRecordedResult(false);
-    },
-    [resetHistory, resetTimer, stopTimer],
-  );
+  const resetGameState = (level) => {
+    setBoardResetToken((prev) => prev + 1);
+    setMatchedPairs(0);
+    stopTimer();
+    resetTimer(level.timeLimit);
+    setStatus('idle');
+    resetHistory();
+    setResultModal(null);
+    setModalCountdown(3);
+    setHasRecordedResult(false);
+  };
 
-  const handleBoardReset = useCallback(() => {
+  const handleBoardReset = () => {
     resetGameState(selectedLevel);
-  }, [resetGameState, selectedLevel]);
+  };
 
   const handleLevelChange = (nextLevelId) => {
     const targetLevel =
@@ -72,40 +67,37 @@ const GamePage = ({ onAddRecord }) => {
     resetGameState(targetLevel);
   };
 
-  const handleGameSuccess = useCallback(
-    (timeTaken) => {
-      stopTimer();
-      setStatus('success');
+  const handleGameSuccess = (timeTaken) => {
+    stopTimer();
+    setStatus('success');
 
-      if (hasRecordedResult) {
-        return;
+    if (hasRecordedResult) {
+      return;
+    }
+
+    setResultModal((current) => {
+      if (current) {
+        return current;
       }
+      return {
+        type: 'success',
+        levelLabel: selectedLevel.label,
+        timeTaken,
+      };
+    });
 
-      setResultModal((current) => {
-        if (current) {
-          return current;
-        }
-        return {
-          type: 'success',
-          levelLabel: selectedLevel.label,
-          timeTaken,
-        };
+    if (onAddRecord) {
+      const generatedId = generateClientId();
+      onAddRecord({
+        id: generatedId,
+        levelId: selectedLevel.id,
+        levelLabel: selectedLevel.label,
+        clearSeconds: timeTaken,
+        timestamp: new Date().toISOString(),
       });
-
-      if (onAddRecord) {
-        const generatedId = generateClientId();
-        onAddRecord({
-          id: generatedId,
-          levelId: selectedLevel.id,
-          levelLabel: selectedLevel.label,
-          clearSeconds: timeTaken,
-          timestamp: new Date().toISOString(),
-        });
-        setHasRecordedResult(true);
-      }
-    },
-    [hasRecordedResult, onAddRecord, selectedLevel, stopTimer],
-  );
+      setHasRecordedResult(true);
+    }
+  };
 
   useGameCompletion({
     matchedPairs,
@@ -115,26 +107,22 @@ const GamePage = ({ onAddRecord }) => {
     onComplete: handleGameSuccess,
   });
 
-  const handleTimeout = useCallback(() => {
-    stopTimer();
-    setStatus('timeout');
-    setResultModal((current) => {
-      if (current) {
-        return current;
-      }
-      return {
-        type: 'timeout',
-        levelLabel: selectedLevel.label,
-        timeTaken: selectedLevel.timeLimit,
-      };
-    });
-  }, [selectedLevel, stopTimer]);
-
   useEffect(() => {
     if (timeLeft === 0 && !timerActive) {
-      handleTimeout();
+      stopTimer();
+      setStatus('timeout');
+      setResultModal((current) => {
+        if (current) {
+          return current;
+        }
+        return {
+          type: 'timeout',
+          levelLabel: selectedLevel.label,
+          timeTaken: selectedLevel.timeLimit,
+        };
+      });
     }
-  }, [handleTimeout, timeLeft, timerActive]);
+  }, [selectedLevel, stopTimer, timeLeft, timerActive]);
 
   const handleFirstFlip = () => {
     if (!timerActive && timeLeft > 0) {
@@ -146,9 +134,9 @@ const GamePage = ({ onAddRecord }) => {
     addFlipHistoryEntry(cards, result);
   };
 
-  const handleAutoReset = useCallback(() => {
+  const handleAutoReset = () => {
     resetGameState(selectedLevel);
-  }, [resetGameState, selectedLevel]);
+  };
 
   useResultModalEffects({
     resultModal,
