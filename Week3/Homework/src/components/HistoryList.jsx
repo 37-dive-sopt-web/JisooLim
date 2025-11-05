@@ -7,8 +7,7 @@ const HistoryList = ({ history = [] }) => {
 
   useEffect(() => {
     if (scrollAreaRef.current) {
-      const rect = scrollAreaRef.current.getBoundingClientRect();
-      setHistoryHeight(rect.height);
+      setHistoryHeight(scrollAreaRef.current.clientHeight);
     }
   }, []);
 
