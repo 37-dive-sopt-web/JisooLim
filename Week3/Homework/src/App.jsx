@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import Header from './components/Header.jsx';
-import GamePage from './pages/game/GamePage.jsx';
-import RankingPage from './pages/ranking/RankingPage.jsx';
+import Header from '@/components/Header.jsx';
+import GamePage from '@/pages/game/GamePage.jsx';
+import RankingPage from '@/pages/ranking/RankingPage.jsx';
 import {
   LEVELS,
   LEVEL_ORDER,
   RANKING_STORAGE_KEY,
-} from './constants/gameConfig.js';
-import { useRankingRecords } from './hooks/index.js';
+} from '@/constants/gameConfig.js';
+import { useRankingRecords } from '@/hooks/index.js';
 
 const App = () => {
   const [activeTab, setActiveTab] = useState('game');

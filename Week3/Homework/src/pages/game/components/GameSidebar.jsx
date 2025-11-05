@@ -1,4 +1,4 @@
-import { SIDEBAR_STATUS_MESSAGES } from '../../../constants/messages.js';
+import { SIDEBAR_STATUS_MESSAGES } from '@/constants/messages.js';
 import LevelSelector from './LevelSelector.jsx';
 import StatCardList from './StatCardList.jsx';
 import HistoryList from './HistoryList.jsx';

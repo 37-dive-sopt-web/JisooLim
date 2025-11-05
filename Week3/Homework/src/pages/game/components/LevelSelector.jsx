@@ -1,4 +1,4 @@
-import IcDownarrow from '../../../assets/svgs/icDownarrow.jsx';
+import IcDownarrow from '@/assets/svgs/icDownarrow.jsx';
 
 const LevelSelector = ({ levels = [], selectedLevelId, onLevelChange }) => (
   <div className="relative shrink-0">

@@ -1,4 +1,4 @@
-import { formatSeconds, formatTimestamp } from '../../../utils/format.js';
+import { formatSeconds, formatTimestamp } from '@/utils/format.js';
 
 const RankingBoard = ({ records = [], onReset }) => {
   const hasRecords = records.length > 0;

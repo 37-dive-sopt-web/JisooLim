@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import GameBoard from './components/GameBoard.jsx';
 import GameResultModal from './components/GameResultModal.jsx';
-import { LEVELS } from '../../constants/gameConfig.js';
-import { generateClientId } from '../../utils/id.js';
+import { LEVELS } from '@/constants/gameConfig.js';
+import { generateClientId } from '@/utils/id.js';
 import {
   useCountdownTimer,
   useFlipHistory,
   useGameCompletion,
   useResultModalEffects,
-} from '../../hooks/index.js';
+} from '@/hooks/index.js';
 
 const GamePage = ({ onAddRecord }) => {
   const [boardResetToken, setBoardResetToken] = useState(0);
