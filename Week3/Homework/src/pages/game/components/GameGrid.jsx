@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import GameCard from './GameCard.jsx';
-import { useCardMatching } from '../hooks/useCardMatching.js';
+import { useCardMatching } from '../../../hooks/useCardMatching.js';
 
 const GameGrid = ({
   resetToken = 0,

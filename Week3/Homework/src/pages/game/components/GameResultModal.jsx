@@ -1,6 +1,6 @@
 import { createPortal } from 'react-dom';
-import { formatSeconds } from '../utils/format.js';
-import { RESULT_MODAL_MESSAGES } from '../constants/messages.js';
+import { formatSeconds } from '../../../utils/format.js';
+import { RESULT_MODAL_MESSAGES } from '../../../constants/messages.js';
 
 const GameResultModal = ({
   isOpen = false,
