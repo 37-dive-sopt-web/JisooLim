@@ -4,6 +4,7 @@ import Header from './components/Header.jsx';
 import GameBoard from './components/GameBoard.jsx';
 import GameSidebar from './components/GameSidebar.jsx';
 import GameResultModal from './components/GameResultModal.jsx';
+import RankingBoard from './components/RankingBoard.jsx';
 
 const LEVELS = [
   {
@@ -32,6 +33,12 @@ const LEVELS = [
   },
 ];
 
+const RANKING_STORAGE_KEY = 'memory-game-ranking';
+const LEVEL_ORDER = LEVELS.reduce((accumulator, level, index) => {
+  accumulator[level.id] = index;
+  return accumulator;
+}, {});
+
 const App = () => {
   const [activeTab, setActiveTab] = useState('game');
   const [boardResetToken, setBoardResetToken] = useState(0);
@@ -43,12 +50,104 @@ const App = () => {
   const [flipHistory, setFlipHistory] = useState([]);
   const [resultModal, setResultModal] = useState(null);
   const [modalCountdown, setModalCountdown] = useState(3);
+  const [rankingRecords, setRankingRecords] = useState([]);
+  const [hasRecordedResult, setHasRecordedResult] = useState(false);
 
   const selectedLevel =
     LEVELS.find((level) => level.id === selectedLevelId) ?? LEVELS[0];
   const totalPairs = (selectedLevel.rows * selectedLevel.columns) / 2;
   const remainingPairs = Math.max(totalPairs - matchedPairs, 0);
   const headingText = activeTab === 'game' ? '게임 보드' : '랭킹 보드';
+
+  const sortRecordsByTime = useCallback((records) => {
+    const next = [...records];
+    next.sort((a, b) => {
+      if (a.clearSeconds !== b.clearSeconds) {
+        return a.clearSeconds - b.clearSeconds;
+      }
+      const levelDiff =
+        (LEVEL_ORDER[b.levelId] ?? 0) - (LEVEL_ORDER[a.levelId] ?? 0);
+      if (levelDiff !== 0) {
+        return levelDiff;
+      }
+      const timestampA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+      const timestampB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+      return timestampA - timestampB;
+    });
+    return next;
+  }, []);
+
+  const addRankingRecord = useCallback(
+    (record) => {
+      setRankingRecords((prev) => sortRecordsByTime([...prev, record]));
+    },
+    [sortRecordsByTime],
+  );
+
+  const handleResetRecords = useCallback(() => {
+    setRankingRecords([]);
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem(RANKING_STORAGE_KEY);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    try {
+      const storedValue = window.localStorage.getItem(RANKING_STORAGE_KEY);
+      if (!storedValue) {
+        return;
+      }
+
+      const parsed = JSON.parse(storedValue);
+      if (!Array.isArray(parsed)) {
+        return;
+      }
+
+      const normalized = parsed
+        .map((record) => {
+          const levelId = record.levelId;
+          const levelMeta = LEVELS.find((level) => level.id === levelId);
+          return {
+            id:
+              record.id ??
+              (typeof crypto !== 'undefined' && crypto.randomUUID
+                ? crypto.randomUUID()
+                : `${Date.now()}-${Math.random()}`),
+            levelId,
+            levelLabel: record.levelLabel ?? levelMeta?.label ?? levelId,
+            clearSeconds: Number.isFinite(Number(record.clearSeconds))
+              ? Number(Number(record.clearSeconds).toFixed(2))
+              : 0,
+            timestamp: record.timestamp ?? new Date().toISOString(),
+          };
+        })
+        .filter((record) => Boolean(record.levelId));
+
+      setRankingRecords(sortRecordsByTime(normalized));
+    } catch (error) {
+      console.error('랭킹 데이터를 불러오는 중 문제가 발생했어요.', error);
+    }
+  }, [sortRecordsByTime]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    if (rankingRecords.length === 0) {
+      window.localStorage.removeItem(RANKING_STORAGE_KEY);
+      return;
+    }
+
+    window.localStorage.setItem(
+      RANKING_STORAGE_KEY,
+      JSON.stringify(rankingRecords),
+    );
+  }, [rankingRecords]);
 
   const resetGameState = useCallback((level) => {
     setBoardResetToken((prev) => prev + 1);
@@ -59,6 +158,7 @@ const App = () => {
     setFlipHistory([]);
     setResultModal(null);
     setModalCountdown(3);
+    setHasRecordedResult(false);
   }, []);
 
   const handleBoardReset = () => {
@@ -75,19 +175,47 @@ const App = () => {
     if (matchedPairs === totalPairs && totalPairs > 0) {
       setTimerActive(false);
       setStatus('success');
+
+      const rawTimeTaken = selectedLevel.timeLimit - timeLeft;
+      const timeTaken = Math.max(
+        0,
+        Number(Number(rawTimeTaken).toFixed(2)),
+      );
+
       setResultModal((prev) => {
         if (prev) {
           return prev;
         }
-        const timeTaken = Number((selectedLevel.timeLimit - timeLeft).toFixed(2));
         return {
           type: 'success',
           levelLabel: selectedLevel.label,
-          timeTaken: Math.max(0, timeTaken),
+          timeTaken,
         };
       });
+
+      if (!hasRecordedResult) {
+        const generatedId =
+          typeof crypto !== 'undefined' && crypto.randomUUID
+            ? crypto.randomUUID()
+            : `${Date.now()}-${Math.random()}`;
+        addRankingRecord({
+          id: generatedId,
+          levelId: selectedLevel.id,
+          levelLabel: selectedLevel.label,
+          clearSeconds: timeTaken,
+          timestamp: new Date().toISOString(),
+        });
+        setHasRecordedResult(true);
+      }
     }
-  }, [matchedPairs, totalPairs, selectedLevel, timeLeft]);
+  }, [
+    addRankingRecord,
+    hasRecordedResult,
+    matchedPairs,
+    selectedLevel,
+    timeLeft,
+    totalPairs,
+  ]);
 
   useEffect(() => {
     if (!timerActive) {
@@ -252,7 +380,12 @@ const App = () => {
               </div>
             </div>
           ) : (
-            <div className="mt-8 rounded-3xl bg-[rgba(231,232,234,0.45)] p-6" />
+            <div className="mt-8 min-h-[520px]">
+              <RankingBoard
+                records={rankingRecords}
+                onReset={handleResetRecords}
+              />
+            </div>
           )}
         </section>
       </div>
