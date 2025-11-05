@@ -38,6 +38,7 @@ const App = () => {
   const [timerActive, setTimerActive] = useState(false);
   const [timeLeft, setTimeLeft] = useState(LEVELS[0].timeLimit);
   const [status, setStatus] = useState('idle');
+  const [flipHistory, setFlipHistory] = useState([]);
 
   const selectedLevel =
     LEVELS.find((level) => level.id === selectedLevelId) ?? LEVELS[0];
@@ -51,6 +52,7 @@ const App = () => {
     setTimerActive(false);
     setTimeLeft(selectedLevel.timeLimit);
     setStatus('idle');
+    setFlipHistory([]);
   };
 
   const handleLevelChange = (nextLevelId) => {
@@ -61,6 +63,7 @@ const App = () => {
     setTimerActive(false);
     setTimeLeft(targetLevel.timeLimit);
     setStatus('idle');
+    setFlipHistory([]);
   };
 
   useEffect(() => {
@@ -95,6 +98,21 @@ const App = () => {
     }
   };
 
+  const handlePairResolved = (cards, result) => {
+    setFlipHistory((prev) => {
+      const generatedId =
+        typeof crypto !== 'undefined' && crypto.randomUUID
+          ? crypto.randomUUID()
+          : `${Date.now()}-${Math.random()}`;
+      const nextEntry = {
+        id: generatedId,
+        cards,
+        result,
+      };
+      return [nextEntry, ...prev].slice(0, 10);
+    });
+  };
+
   return (
     <div className="min-h-screen bg-(--gray-extra-light)">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-10">
@@ -125,6 +143,7 @@ const App = () => {
                     onFirstFlip={handleFirstFlip}
                     isLocked={timeLeft <= 0}
                     onStatusChange={setStatus}
+                    onPairResolved={handlePairResolved}
                   />
                 </div>
               </div>
@@ -140,6 +159,7 @@ const App = () => {
                     timeLeft,
                   }}
                   status={status}
+                  history={flipHistory}
                 />
               </div>
             </div>

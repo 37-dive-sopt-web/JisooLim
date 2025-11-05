@@ -21,6 +21,7 @@ const GameBoard = ({
   onFirstFlip,
   isLocked = false,
   onStatusChange,
+  onPairResolved,
 }) => {
   const totalCards = rows * columns;
   const [cardValues, setCardValues] = useState(() => createShuffledPairs(totalCards));
@@ -76,6 +77,7 @@ const GameBoard = ({
 
     const [firstIndex, secondIndex] = nextActive;
     const isMatch = cardValues[firstIndex] === cardValues[secondIndex];
+    const pairValues = [cardValues[firstIndex], cardValues[secondIndex]];
 
     if (isMatch) {
       setMatched((prev) => {
@@ -88,6 +90,7 @@ const GameBoard = ({
         return next;
       });
       setActiveIndices([]);
+      onPairResolved?.(pairValues, 'success');
       return;
     }
 
@@ -103,6 +106,7 @@ const GameBoard = ({
       setIsResolving(false);
       hideTimeoutRef.current = null;
       onStatusChange?.('failure');
+      onPairResolved?.(pairValues, 'failure');
     }, 600);
   };
 
@@ -140,7 +144,7 @@ const GameBoard = ({
               }`}
             >
               <div className="absolute inset-0 rounded-xl bg-(--card-front) backface-hidden" />
-              <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-(--card-back) text-3xl font-semibold text-(--black) backface-hidden transform-[rotateY(180deg)]">
+              <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-(--card-back) text-3xl font-semibold backface-hidden transform-[rotateY(180deg)]">
                 {value}
               </div>
             </div>
