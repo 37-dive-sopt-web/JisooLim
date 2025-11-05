@@ -9,17 +9,20 @@ import {
   RANKING_STORAGE_KEY,
 } from './constants/gameConfig.js';
 import { generateClientId } from './utils/id.js';
-import { useRankingRecords, useResultModalEffects } from './hooks/index.js';
+import {
+  useCountdownTimer,
+  useFlipHistory,
+  useGameCompletion,
+  useRankingRecords,
+  useResultModalEffects,
+} from './hooks/index.js';
 
 const App = () => {
   const [activeTab, setActiveTab] = useState('game');
   const [boardResetToken, setBoardResetToken] = useState(0);
   const [selectedLevelId, setSelectedLevelId] = useState(LEVELS[0].id);
   const [matchedPairs, setMatchedPairs] = useState(0);
-  const [timerActive, setTimerActive] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(LEVELS[0].timeLimit);
   const [status, setStatus] = useState('idle');
-  const [flipHistory, setFlipHistory] = useState([]);
   const [resultModal, setResultModal] = useState(null);
   const [modalCountdown, setModalCountdown] = useState(3);
   const [hasRecordedResult, setHasRecordedResult] = useState(false);
@@ -40,17 +43,36 @@ const App = () => {
     levelOrder: LEVEL_ORDER,
   });
 
+  const { history: flipHistory, addEntry: addFlipHistoryEntry, resetHistory } =
+    useFlipHistory({ maxEntries: 10 });
+
+  const {
+    timeLeft,
+    isActive: timerActive,
+    start: startTimer,
+    stop: stopTimer,
+    reset: resetTimer,
+  } = useCountdownTimer({
+    initialTime: selectedLevel.timeLimit,
+    intervalMs: 100,
+    step: 0.1,
+  });
+
+  useEffect(() => {
+    resetTimer(selectedLevel.timeLimit);
+  }, [resetTimer, selectedLevel.timeLimit]);
+
   const resetGameState = useCallback((level) => {
     setBoardResetToken((prev) => prev + 1);
     setMatchedPairs(0);
-    setTimerActive(false);
-    setTimeLeft(level.timeLimit);
+    stopTimer();
+    resetTimer(level.timeLimit);
     setStatus('idle');
-    setFlipHistory([]);
+    resetHistory();
     setResultModal(null);
     setModalCountdown(3);
     setHasRecordedResult(false);
-  }, []);
+  }, [resetHistory, resetTimer, stopTimer]);
 
   const handleBoardReset = () => {
     resetGameState(selectedLevel);
@@ -62,17 +84,13 @@ const App = () => {
     resetGameState(targetLevel);
   };
 
-  useEffect(() => {
-    if (matchedPairs === totalPairs && totalPairs > 0) {
-      setTimerActive(false);
+  const handleGameSuccess = useCallback(
+    (timeTaken) => {
+      stopTimer();
       setStatus('success');
-
-      const rawTimeTaken = selectedLevel.timeLimit - timeLeft;
-      const timeTaken = Math.max(
-        0,
-        Number(Number(rawTimeTaken).toFixed(2)),
-      );
-
+      if (hasRecordedResult) {
+        return;
+      }
       setResultModal((prev) => {
         if (prev) {
           return prev;
@@ -84,72 +102,56 @@ const App = () => {
         };
       });
 
-      if (!hasRecordedResult) {
-        const generatedId = generateClientId();
-        addRankingRecord({
-          id: generatedId,
-          levelId: selectedLevel.id,
-          levelLabel: selectedLevel.label,
-          clearSeconds: timeTaken,
-          timestamp: new Date().toISOString(),
-        });
-        setHasRecordedResult(true);
-      }
-    }
-  }, [
-    addRankingRecord,
-    hasRecordedResult,
+      const generatedId = generateClientId();
+      addRankingRecord({
+        id: generatedId,
+        levelId: selectedLevel.id,
+        levelLabel: selectedLevel.label,
+        clearSeconds: timeTaken,
+        timestamp: new Date().toISOString(),
+      });
+      setHasRecordedResult(true);
+    },
+    [addRankingRecord, hasRecordedResult, selectedLevel, stopTimer],
+  );
+
+  useGameCompletion({
     matchedPairs,
+    totalPairs,
     selectedLevel,
     timeLeft,
-    totalPairs,
-  ]);
+    onComplete: handleGameSuccess,
+  });
+
+  const handleTimeout = useCallback(() => {
+    stopTimer();
+    setStatus('timeout');
+    setResultModal((current) => {
+      if (current) {
+        return current;
+      }
+      return {
+        type: 'timeout',
+        levelLabel: selectedLevel.label,
+        timeTaken: selectedLevel.timeLimit,
+      };
+    });
+  }, [selectedLevel, stopTimer]);
 
   useEffect(() => {
-    if (!timerActive) {
-      return undefined;
+    if (timeLeft === 0 && !timerActive) {
+      handleTimeout();
     }
-
-    const intervalId = setInterval(() => {
-      setTimeLeft((prev) => {
-        const nextValue = Math.max(0, Number((prev - 0.1).toFixed(2)));
-        if (nextValue === 0) {
-          setTimerActive(false);
-          setStatus('timeout');
-          setResultModal((current) => {
-            if (current) {
-              return current;
-            }
-            return {
-              type: 'timeout',
-              levelLabel: selectedLevel.label,
-              timeTaken: selectedLevel.timeLimit,
-            };
-          });
-        }
-        return nextValue;
-      });
-    }, 100);
-
-    return () => clearInterval(intervalId);
-  }, [timerActive, selectedLevel]);
+  }, [handleTimeout, timeLeft, timerActive]);
 
   const handleFirstFlip = () => {
     if (!timerActive && timeLeft > 0) {
-      setTimerActive(true);
+      startTimer();
     }
   };
 
   const handlePairResolved = (cards, result) => {
-    setFlipHistory((prev) => {
-      const generatedId = generateClientId();
-      const nextEntry = {
-        id: generatedId,
-        cards,
-        result,
-      };
-      return [nextEntry, ...prev].slice(0, 10);
-    });
+    addFlipHistoryEntry(cards, result);
   };
 
   const handleAutoReset = useCallback(() => {
