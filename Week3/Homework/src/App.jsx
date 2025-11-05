@@ -37,6 +37,7 @@ const App = () => {
   const [matchedPairs, setMatchedPairs] = useState(0);
   const [timerActive, setTimerActive] = useState(false);
   const [timeLeft, setTimeLeft] = useState(LEVELS[0].timeLimit);
+  const [status, setStatus] = useState('idle');
 
   const selectedLevel =
     LEVELS.find((level) => level.id === selectedLevelId) ?? LEVELS[0];
@@ -49,6 +50,7 @@ const App = () => {
     setMatchedPairs(0);
     setTimerActive(false);
     setTimeLeft(selectedLevel.timeLimit);
+    setStatus('idle');
   };
 
   const handleLevelChange = (nextLevelId) => {
@@ -58,11 +60,13 @@ const App = () => {
     setMatchedPairs(0);
     setTimerActive(false);
     setTimeLeft(targetLevel.timeLimit);
+    setStatus('idle');
   };
 
   useEffect(() => {
     if (matchedPairs === totalPairs && totalPairs > 0) {
       setTimerActive(false);
+      setStatus('success');
     }
   }, [matchedPairs, totalPairs]);
 
@@ -76,6 +80,7 @@ const App = () => {
         const nextValue = Math.max(0, Number((prev - 0.1).toFixed(2)));
         if (nextValue === 0) {
           setTimerActive(false);
+          setStatus('failure');
         }
         return nextValue;
       });
@@ -119,6 +124,7 @@ const App = () => {
                     onMatchChange={setMatchedPairs}
                     onFirstFlip={handleFirstFlip}
                     isLocked={timeLeft <= 0}
+                    onStatusChange={setStatus}
                   />
                 </div>
               </div>
@@ -133,6 +139,7 @@ const App = () => {
                     remainingPairs,
                     timeLeft,
                   }}
+                  status={status}
                 />
               </div>
             </div>

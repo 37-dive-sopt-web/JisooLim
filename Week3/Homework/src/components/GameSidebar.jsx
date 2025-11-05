@@ -1,5 +1,13 @@
 import dropdownIcon from '../assets/svgs/ic_downarrow.svg';
 
+const statusMessages = {
+  idle: '카드를 눌러 게임을 시작하세요',
+  success: '성공!🤩',
+  failure: '실패!😞',
+  resolving: '잠시만 기다려 주세요..',
+  duplicate: '이미 선택한 카드에요😮',
+};
+
 const GameSidebar = ({
   levels = [],
   selectedLevelId,
@@ -10,9 +18,11 @@ const GameSidebar = ({
     remainingPairs: 0,
     timeLeft: 0,
   },
+  status = 'idle',
 }) => {
   const { totalPairs, matchedPairs, remainingPairs, timeLeft } = stats;
   const formattedTime = timeLeft.toFixed(2).padStart(5, '0');
+  const statusMessage = statusMessages[status] ?? statusMessages.idle;
 
   return (
     <aside className="flex h-full w-full flex-col gap-5 rounded-2xl bg-[rgba(231,232,234,0.45)] p-6">
@@ -52,7 +62,11 @@ const GameSidebar = ({
           <p className="mt-2 text-lg font-semibold text-(--black)">{remainingPairs}</p>
         </div>
       </div>
-      <div className="h-32 rounded-xl bg-white/70" aria-hidden="true" />
+      <div className="rounded-xl bg-white/70 p-4">
+        <p className="mt-3 rounded-xl bg-white px-4 py-3 text-m font-semibold text-(--black)">
+          {statusMessage}
+        </p>
+      </div>
       <div className="h-48 rounded-xl bg-white/70" aria-hidden="true" />
       <div className="flex-1 rounded-xl bg-white/70" aria-hidden="true" />
     </aside>

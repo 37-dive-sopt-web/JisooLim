@@ -20,6 +20,7 @@ const GameBoard = ({
   onMatchChange,
   onFirstFlip,
   isLocked = false,
+  onStatusChange,
 }) => {
   const totalCards = rows * columns;
   const [cardValues, setCardValues] = useState(() => createShuffledPairs(totalCards));
@@ -41,17 +42,25 @@ const GameBoard = ({
     setActiveIndices([]);
     setIsResolving(false);
     onMatchChange?.(0);
+    onStatusChange?.('idle');
     setHasStarted(false);
-  }, [resetToken, totalCards, onMatchChange]);
+  }, [resetToken, totalCards, onMatchChange, onStatusChange]);
 
   const handleCardClick = (index) => {
     if (isLocked || matched[index] || isResolving || activeIndices.includes(index)) {
+      if (matched[index] || activeIndices.includes(index)) {
+        onStatusChange?.('duplicate');
+      }
       return;
     }
 
     if (!hasStarted) {
       setHasStarted(true);
       onFirstFlip?.();
+    }
+
+    if (activeIndices.length === 0) {
+      onStatusChange?.('idle');
     }
 
     setFlipped((prev) =>
@@ -75,12 +84,14 @@ const GameBoard = ({
         );
         const matchedPairsCount = next.filter(Boolean).length / 2;
         onMatchChange?.(matchedPairsCount);
+        onStatusChange?.('success');
         return next;
       });
       setActiveIndices([]);
       return;
     }
 
+    onStatusChange?.('resolving');
     setIsResolving(true);
     hideTimeoutRef.current = setTimeout(() => {
       setFlipped((prev) =>
@@ -91,6 +102,7 @@ const GameBoard = ({
       setActiveIndices([]);
       setIsResolving(false);
       hideTimeoutRef.current = null;
+      onStatusChange?.('failure');
     }, 600);
   };
 
