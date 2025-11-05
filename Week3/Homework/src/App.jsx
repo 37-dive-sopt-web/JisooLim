@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import confetti from 'canvas-confetti';
 import Header from './components/Header.jsx';
 import GameBoard from './components/GameBoard.jsx';
 import GameSidebar from './components/GameSidebar.jsx';
@@ -157,6 +158,48 @@ const App = () => {
       clearTimeout(autoResetTimeout);
     };
   }, [resultModal, resetGameState, selectedLevel]);
+
+  useEffect(() => {
+    if (!resultModal || resultModal.type !== 'success') {
+      return undefined;
+    }
+
+    const fireConfetti = () => {
+      const baseOptions = {
+        particleCount: 80,
+        spread: 70,
+        origin: { y: 0.6 },
+      };
+
+      const rootStyles = getComputedStyle(document.documentElement);
+      const colors1 = [
+        rootStyles.getPropertyValue('--green').trim(),
+        rootStyles.getPropertyValue('--card-back').trim(),
+      ];
+      const colors2 = [
+        rootStyles.getPropertyValue('--peach').trim(),
+        rootStyles.getPropertyValue('--card-back').trim(),
+      ];
+
+      confetti({
+        ...baseOptions,
+        angle: 60,
+        colors: colors1,
+      });
+      confetti({
+        ...baseOptions,
+        angle: 120,
+        colors: colors2,
+      });
+    };
+
+    fireConfetti();
+    const followUpTimeout = setTimeout(fireConfetti, 500);
+
+    return () => {
+      clearTimeout(followUpTimeout);
+    };
+  }, [resultModal]);
 
   return (
     <div className="min-h-screen bg-(--gray-extra-light)">

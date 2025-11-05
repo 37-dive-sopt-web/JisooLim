@@ -25,9 +25,6 @@ const GameResultModal = ({
   const primaryMessage = isSuccess
     ? `${levelLabel ?? 'Level'}을 ${formattedSeconds}초 만에 클리어했어요`
     : `${levelLabel ?? 'Level'}을 제한 시간 안에 클리어하지 못했어요`;
-  const secondaryMessage = isSuccess
-    ? ''
-    : `제한 시간 ${formattedSeconds}초가 모두 지났어요`;
   const countdownColor = isSuccess ? 'text-(--green)' : 'text-(--peach-dark)';
 
   const modalContent = (
@@ -40,9 +37,6 @@ const GameResultModal = ({
       >
         <h3 className="text-2xl font-bold text-(--black)">{headingText}</h3>
         <p className="mt-4 text-base font-semibold text-(--gray-dark)">{primaryMessage}</p>
-        {secondaryMessage ? (
-          <p className="mt-2 text-sm font-medium text-(--gray)">{secondaryMessage}</p>
-        ) : null}
         <p className={`mt-6 text-sm font-semibold ${countdownColor}`}>
           <span className="text-lg font-bold">{countdown}</span>초 후 자동으로 새 게임을 시작해요
         </p>
