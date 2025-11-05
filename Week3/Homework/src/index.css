@@ -6,7 +6,9 @@
   --gray-dark: #3f4852;
   --black: #1f2933;
   --white: #ffffff;
-  --mint: #6dd3c2;
-  --mint-dark: #3c9488;
-  --peach: #f9b09f;
+  --card-front: #fdf6c6;
+  --card-back: #f4c542;
+  --card-outline: #d09c2c;
+  --peach: #f79c87;
+  --peach-dark: #f57f63;
 }
