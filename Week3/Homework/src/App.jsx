@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Header from './components/Header.jsx';
 import GameBoard from './components/GameBoard.jsx';
 import GameSidebar from './components/GameSidebar.jsx';
+import GameResultModal from './components/GameResultModal.jsx';
 
 const LEVELS = [
   {
@@ -39,6 +40,8 @@ const App = () => {
   const [timeLeft, setTimeLeft] = useState(LEVELS[0].timeLimit);
   const [status, setStatus] = useState('idle');
   const [flipHistory, setFlipHistory] = useState([]);
+  const [resultModal, setResultModal] = useState(null);
+  const [modalCountdown, setModalCountdown] = useState(3);
 
   const selectedLevel =
     LEVELS.find((level) => level.id === selectedLevelId) ?? LEVELS[0];
@@ -46,32 +49,44 @@ const App = () => {
   const remainingPairs = Math.max(totalPairs - matchedPairs, 0);
   const headingText = activeTab === 'game' ? '게임 보드' : '랭킹 보드';
 
-  const handleBoardReset = () => {
+  const resetGameState = useCallback((level) => {
     setBoardResetToken((prev) => prev + 1);
     setMatchedPairs(0);
     setTimerActive(false);
-    setTimeLeft(selectedLevel.timeLimit);
+    setTimeLeft(level.timeLimit);
     setStatus('idle');
     setFlipHistory([]);
+    setResultModal(null);
+    setModalCountdown(3);
+  }, []);
+
+  const handleBoardReset = () => {
+    resetGameState(selectedLevel);
   };
 
   const handleLevelChange = (nextLevelId) => {
     const targetLevel = LEVELS.find((level) => level.id === nextLevelId) ?? LEVELS[0];
     setSelectedLevelId(nextLevelId);
-    setBoardResetToken((prev) => prev + 1);
-    setMatchedPairs(0);
-    setTimerActive(false);
-    setTimeLeft(targetLevel.timeLimit);
-    setStatus('idle');
-    setFlipHistory([]);
+    resetGameState(targetLevel);
   };
 
   useEffect(() => {
     if (matchedPairs === totalPairs && totalPairs > 0) {
       setTimerActive(false);
       setStatus('success');
+      setResultModal((prev) => {
+        if (prev) {
+          return prev;
+        }
+        const timeTaken = Number((selectedLevel.timeLimit - timeLeft).toFixed(2));
+        return {
+          type: 'success',
+          levelLabel: selectedLevel.label,
+          timeTaken: Math.max(0, timeTaken),
+        };
+      });
     }
-  }, [matchedPairs, totalPairs]);
+  }, [matchedPairs, totalPairs, selectedLevel, timeLeft]);
 
   useEffect(() => {
     if (!timerActive) {
@@ -83,14 +98,24 @@ const App = () => {
         const nextValue = Math.max(0, Number((prev - 0.1).toFixed(2)));
         if (nextValue === 0) {
           setTimerActive(false);
-          setStatus('failure');
+          setStatus('timeout');
+          setResultModal((current) => {
+            if (current) {
+              return current;
+            }
+            return {
+              type: 'timeout',
+              levelLabel: selectedLevel.label,
+              timeTaken: selectedLevel.timeLimit,
+            };
+          });
         }
         return nextValue;
       });
     }, 100);
 
     return () => clearInterval(intervalId);
-  }, [timerActive]);
+  }, [timerActive, selectedLevel]);
 
   const handleFirstFlip = () => {
     if (!timerActive && timeLeft > 0) {
@@ -112,6 +137,26 @@ const App = () => {
       return [nextEntry, ...prev].slice(0, 10);
     });
   };
+
+  useEffect(() => {
+    if (!resultModal) {
+      setModalCountdown(3);
+      return undefined;
+    }
+
+    setModalCountdown(3);
+    const countdownInterval = setInterval(() => {
+      setModalCountdown((prev) => (prev > 1 ? prev - 1 : prev));
+    }, 1000);
+    const autoResetTimeout = setTimeout(() => {
+      resetGameState(selectedLevel);
+    }, 3000);
+
+    return () => {
+      clearInterval(countdownInterval);
+      clearTimeout(autoResetTimeout);
+    };
+  }, [resultModal, resetGameState, selectedLevel]);
 
   return (
     <div className="min-h-screen bg-(--gray-extra-light)">
@@ -168,6 +213,13 @@ const App = () => {
           )}
         </section>
       </div>
+      <GameResultModal
+        isOpen={Boolean(resultModal)}
+        type={resultModal?.type}
+        levelLabel={resultModal?.levelLabel}
+        timeTaken={resultModal?.timeTaken}
+        countdown={modalCountdown}
+      />
     </div>
   );
 };

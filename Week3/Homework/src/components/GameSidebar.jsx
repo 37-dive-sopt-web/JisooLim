@@ -7,6 +7,7 @@ const statusMessages = {
   failure: '실패 !😞',
   resolving: '잠시만 기다려 주세요..',
   duplicate: '이미 선택한 카드에요 😮',
+  timeout: '시간이 초과됐어요 🕒',
 };
 
 const GameSidebar = ({
