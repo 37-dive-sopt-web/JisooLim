@@ -1,25 +1,4 @@
-const secondsFormatter = (value) => {
-  if (typeof value !== 'number' || Number.isNaN(value)) {
-    return '0.00';
-  }
-  return value.toFixed(2);
-};
-
-const dateTimeFormatter = new Intl.DateTimeFormat('ko-KR', {
-  dateStyle: 'medium',
-  timeStyle: 'medium',
-});
-
-const formatTimestamp = (value) => {
-  if (!value) {
-    return '-';
-  }
-  try {
-    return dateTimeFormatter.format(new Date(value));
-  } catch {
-    return '-';
-  }
-};
+import { formatSeconds, formatTimestamp } from '../utils/format.js';
 
 const RankingBoard = ({ records = [], onReset }) => {
   const hasRecords = records.length > 0;
@@ -51,7 +30,7 @@ const RankingBoard = ({ records = [], onReset }) => {
               >
                 <span>{index + 1}</span>
                 <span className="text-(--black)">{record.levelLabel ?? record.levelId}</span>
-                <span>{secondsFormatter(record.clearSeconds)}</span>
+                <span>{formatSeconds(record.clearSeconds)}</span>
                 <span>{formatTimestamp(record.timestamp)}</span>
               </div>
             ))

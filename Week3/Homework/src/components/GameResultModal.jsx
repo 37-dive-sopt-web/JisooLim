@@ -1,11 +1,5 @@
 import { createPortal } from 'react-dom';
-
-const formatSeconds = (value) => {
-  if (typeof value !== 'number' || Number.isNaN(value)) {
-    return '0';
-  }
-  return value.toFixed(2).replace(/\.?0+$/, '');
-};
+import { formatSeconds } from '../utils/format.js';
 
 const GameResultModal = ({
   isOpen = false,
@@ -19,7 +13,7 @@ const GameResultModal = ({
   }
 
   const isSuccess = type === 'success';
-  const formattedSeconds = formatSeconds(timeTaken);
+  const formattedSeconds = formatSeconds(timeTaken, { trimZeros: true });
 
   const headingText = isSuccess ? '축하합니다 !!' : '아쉽지만 다음 기회에';
   const primaryMessage = isSuccess

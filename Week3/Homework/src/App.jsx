@@ -15,6 +15,8 @@ import {
   CONFETTI_BURSTS,
   CONFETTI_INTERVAL_MS,
 } from './constants/effects.js';
+import { generateClientId } from './utils/id.js';
+import { sortRecordsByTime as sortRankingRecordsByTime } from './utils/ranking.js';
 
 const App = () => {
   const [activeTab, setActiveTab] = useState('game');
@@ -36,29 +38,13 @@ const App = () => {
   const remainingPairs = Math.max(totalPairs - matchedPairs, 0);
   const headingText = activeTab === 'game' ? '게임 보드' : '랭킹 보드';
 
-  const sortRecordsByTime = useCallback((records) => {
-    const next = [...records];
-    next.sort((a, b) => {
-      if (a.clearSeconds !== b.clearSeconds) {
-        return a.clearSeconds - b.clearSeconds;
-      }
-      const levelDiff =
-        (LEVEL_ORDER[b.levelId] ?? 0) - (LEVEL_ORDER[a.levelId] ?? 0);
-      if (levelDiff !== 0) {
-        return levelDiff;
-      }
-      const timestampA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
-      const timestampB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
-      return timestampA - timestampB;
-    });
-    return next;
-  }, []);
-
   const addRankingRecord = useCallback(
     (record) => {
-      setRankingRecords((prev) => sortRecordsByTime([...prev, record]));
+      setRankingRecords((prev) =>
+        sortRankingRecordsByTime([...prev, record], LEVEL_ORDER),
+      );
     },
-    [sortRecordsByTime],
+    [],
   );
 
   const handleResetRecords = useCallback(() => {
@@ -89,11 +75,7 @@ const App = () => {
           const levelId = record.levelId;
           const levelMeta = LEVELS.find((level) => level.id === levelId);
           return {
-            id:
-              record.id ??
-              (typeof crypto !== 'undefined' && crypto.randomUUID
-                ? crypto.randomUUID()
-                : `${Date.now()}-${Math.random()}`),
+            id: record.id ?? generateClientId(),
             levelId,
             levelLabel: record.levelLabel ?? levelMeta?.label ?? levelId,
             clearSeconds: Number.isFinite(Number(record.clearSeconds))
@@ -104,11 +86,13 @@ const App = () => {
         })
         .filter((record) => Boolean(record.levelId));
 
-      setRankingRecords(sortRecordsByTime(normalized));
+      setRankingRecords(
+        sortRankingRecordsByTime(normalized, LEVEL_ORDER),
+      );
     } catch (error) {
       console.error('랭킹 데이터를 불러오는 중 문제가 발생했어요.', error);
     }
-  }, [sortRecordsByTime]);
+  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -171,10 +155,7 @@ const App = () => {
       });
 
       if (!hasRecordedResult) {
-        const generatedId =
-          typeof crypto !== 'undefined' && crypto.randomUUID
-            ? crypto.randomUUID()
-            : `${Date.now()}-${Math.random()}`;
+        const generatedId = generateClientId();
         addRankingRecord({
           id: generatedId,
           levelId: selectedLevel.id,
@@ -231,10 +212,7 @@ const App = () => {
 
   const handlePairResolved = (cards, result) => {
     setFlipHistory((prev) => {
-      const generatedId =
-        typeof crypto !== 'undefined' && crypto.randomUUID
-          ? crypto.randomUUID()
-          : `${Date.now()}-${Math.random()}`;
+      const generatedId = generateClientId();
       const nextEntry = {
         id: generatedId,
         cards,
