@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import Header from './components/Header.jsx';
 import GameBoard from './components/GameBoard.jsx';
-import GameSidebar from './components/GameSidebar.jsx';
 import GameResultModal from './components/GameResultModal.jsx';
 import RankingBoard from './components/RankingBoard.jsx';
 import {
@@ -172,47 +171,32 @@ const App = () => {
             <h2 className="text-2xl font-bold text-(--black)">{headingText}</h2>
           </div>
           {activeTab === 'game' ? (
-            <div className="mt-8 flex flex-col gap-6 lg:flex-row lg:items-stretch lg:gap-10">
-              <div className="flex w-full flex-col items-center gap-4 lg:max-w-[520px]">
-                <div className="flex w-full max-w-[520px] justify-end">
-                  <button
-                    type="button"
-                    aria-label="게임 보드 리셋"
-                    onClick={handleBoardReset}
-                    className="rounded-full bg-(--peach) px-4 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[color-mix(in_srgb,var(--peach),#ffffff_20%)] focus-visible:outline focus-visible:outline-(--peach-dark)"
-                  >
-                    게임 리셋
-                  </button>
-                </div>
-                <div className="w-full max-w-[520px]">
-                  <GameBoard
-                    resetToken={boardResetToken}
-                    rows={selectedLevel.rows}
-                    columns={selectedLevel.columns}
-                    onMatchChange={setMatchedPairs}
-                    onFirstFlip={handleFirstFlip}
-                    isLocked={timeLeft <= 0}
-                    onStatusChange={setStatus}
-                    onPairResolved={handlePairResolved}
-                  />
-                </div>
-              </div>
-              <div className="w-full lg:w-[480px]">
-                <GameSidebar
-                  levels={LEVELS}
-                  selectedLevelId={selectedLevelId}
-                  onLevelChange={handleLevelChange}
-                  stats={{
-                    totalPairs,
-                    matchedPairs,
-                    remainingPairs,
-                    timeLeft,
-                  }}
-                  status={status}
-                  history={flipHistory}
-                />
-              </div>
-            </div>
+            <GameBoard
+              onReset={handleBoardReset}
+              gridProps={{
+                resetToken: boardResetToken,
+                rows: selectedLevel.rows,
+                columns: selectedLevel.columns,
+                onMatchChange: setMatchedPairs,
+                onFirstFlip: handleFirstFlip,
+                isLocked: timeLeft <= 0,
+                onStatusChange: setStatus,
+                onPairResolved: handlePairResolved,
+              }}
+              sidebarProps={{
+                levels: LEVELS,
+                selectedLevelId,
+                onLevelChange: handleLevelChange,
+                stats: {
+                  totalPairs,
+                  matchedPairs,
+                  remainingPairs,
+                  timeLeft,
+                },
+                status,
+                history: flipHistory,
+              }}
+            />
           ) : (
             <div className="mt-8 min-h-[520px]">
               <RankingBoard
