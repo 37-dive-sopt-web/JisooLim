@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import GameCard from './GameCard.jsx';
 
 const createShuffledPairs = (totalCards) => {
   const pairCount = totalCards / 2;
@@ -129,26 +130,13 @@ const GameBoard = ({
         const isMatched = matched[index];
 
         return (
-          <button
+          <GameCard
             key={`${value}-${index}`}
-            type="button"
-            aria-pressed={isFlipped}
+            value={value}
+            isFlipped={isFlipped}
+            isMatched={isMatched}
             onClick={() => handleCardClick(index)}
-            className={`relative aspect-square overflow-hidden rounded-xl focus-visible:outline focus-visible:outline-(--card-outline) ${
-              isMatched ? 'cursor-default opacity-95' : 'cursor-pointer'
-            }`}
-          >
-            <div
-              className={`absolute inset-0 rounded-xl transition-transform duration-500 transform-3d ${
-                isFlipped ? 'transform-[rotateY(180deg)]' : ''
-              }`}
-            >
-              <div className="absolute inset-0 rounded-xl bg-(--card-front) backface-hidden" />
-              <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-(--card-back) text-3xl font-semibold backface-hidden transform-[rotateY(180deg)]">
-                {value}
-              </div>
-            </div>
-          </button>
+          />
         );
       })}
     </div>
