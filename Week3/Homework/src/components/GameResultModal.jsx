@@ -1,5 +1,6 @@
 import { createPortal } from 'react-dom';
 import { formatSeconds } from '../utils/format.js';
+import { RESULT_MODAL_MESSAGES } from '../constants/messages.js';
 
 const GameResultModal = ({
   isOpen = false,
@@ -12,14 +13,12 @@ const GameResultModal = ({
     return null;
   }
 
-  const isSuccess = type === 'success';
+  const levelDisplay = levelLabel ?? 'Level';
   const formattedSeconds = formatSeconds(timeTaken, { trimZeros: true });
-
-  const headingText = isSuccess ? '축하합니다 !!' : '아쉽지만 다음 기회에';
-  const primaryMessage = isSuccess
-    ? `${levelLabel ?? 'Level'}을 ${formattedSeconds}초 만에 클리어했어요`
-    : `${levelLabel ?? 'Level'}을 제한 시간 안에 클리어하지 못했어요`;
-  const countdownColor = isSuccess ? 'text-(--green)' : 'text-(--peach-dark)';
+  const messageSet = RESULT_MODAL_MESSAGES[type] ?? RESULT_MODAL_MESSAGES.timeout;
+  const headingText = messageSet.heading;
+  const primaryMessage = messageSet.primary(levelDisplay, formattedSeconds);
+  const countdownColor = messageSet.countdownClass;
 
   const modalContent = (
     <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/30 px-6 py-8">
