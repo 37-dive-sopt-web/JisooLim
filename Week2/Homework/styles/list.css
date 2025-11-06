@@ -1,0 +1,169 @@
+.list-panel {
+    margin-top: 4rem;
+    background: var(--white);
+    border-radius: 16px;
+    padding: 2.8rem 3.2rem 3.2rem;
+    box-shadow: 0 2rem 4.8rem rgba(15, 23, 42, 0.08);
+    border: 1px solid var(--gray-200);
+}
+
+.list-panel__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.6rem;
+}
+
+.list-panel__title {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--charcoal-900);
+}
+
+.list-panel__actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.list-panel__button {
+    min-width: 8.4rem;
+    padding: 1.1rem 1.6rem;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    font-size: 1.4rem;
+    font-weight: 600;
+    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, transform 150ms ease;
+    cursor: pointer;
+}
+
+.list-panel__button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
+}
+
+.list-panel__button--ghost {
+    background: var(--white);
+    color: var(--charcoal-900);
+    border-color: var(--gray-200);
+}
+
+.list-panel__button--ghost:hover:not(:disabled),
+.list-panel__button--ghost:focus-visible:not(:disabled) {
+    background: var(--gray-50);
+    transform: translateY(-1px);
+}
+
+.list-panel__button--solid {
+    background: var(--green-50);
+    color: var(--charcoal-900);
+    border-color: transparent;
+}
+
+.list-panel__button--solid:hover:not(:disabled),
+.list-panel__button--solid:focus-visible:not(:disabled) {
+    background: var(--green-60);
+    transform: translateY(-1px);
+}
+
+.list-table {
+    margin-top: 2.4rem;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--gray-200);
+    background: var(--white);
+}
+
+.list-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.list-table thead {
+    background: var(--green-20);
+}
+
+.list-table th,
+.list-table td {
+    padding: 1.2rem 1.6rem;
+    font-size: 1.4rem;
+    color: var(--charcoal-900);
+    border-bottom: 1px solid var(--gray-200);
+    text-align: center;
+}
+
+.list-table th {
+    font-weight: 600;
+}
+
+.list-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.list-table__cell--checkbox {
+    width: 4.4rem;
+    text-align: center;
+}
+
+.list-table__cell--checkbox input[type="checkbox"] {
+    width: 1.6rem;
+    height: 1.6rem;
+    cursor: pointer;
+}
+
+.list-table tbody tr:hover {
+    background: var(--gray-50);
+}
+
+.list-table__empty-message {
+    padding: 3.2rem 1.6rem;
+    text-align: center;
+    font-size: 1.4rem;
+    color: rgba(29, 42, 45, 0.55);
+}
+
+.list-table__link {
+    color: var(--green-60);
+    font-weight: 600;
+}
+
+.list-table__link:hover,
+.list-table__link:focus-visible {
+    text-decoration: underline;
+}
+
+@media (max-width: var(--bp-medium)) {
+    .list-panel {
+        padding: 2.4rem;
+    }
+
+    .list-table {
+        overflow-x: auto;
+        border-radius: 12px;
+    }
+
+    .list-table table {
+        min-width: 960px;
+    }
+}
+
+@media (max-width: var(--bp-small)) {
+    .list-panel {
+        padding: 2rem;
+    }
+
+    .list-panel__header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .list-panel__actions {
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 0.8rem;
+    }
+}
