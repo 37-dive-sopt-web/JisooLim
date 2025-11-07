@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import GameBoard from './components/GameBoard.jsx';
 import GameResultModal from './components/GameResultModal.jsx';
 import { LEVELS } from '@/constants/gameConfig.js';
@@ -67,6 +67,22 @@ const GamePage = ({ onAddRecord }) => {
     resetGameState(targetLevel);
   };
 
+  const showResultModal = useCallback(
+    (type, timeTaken) => {
+      setResultModal((current) => {
+        if (current) {
+          return current;
+        }
+        return {
+          type,
+          levelLabel: selectedLevel.label,
+          timeTaken,
+        };
+      });
+    },
+    [selectedLevel.label],
+  );
+
   const handleGameSuccess = (timeTaken) => {
     stopTimer();
     setStatus('success');
@@ -75,16 +91,7 @@ const GamePage = ({ onAddRecord }) => {
       return;
     }
 
-    setResultModal((current) => {
-      if (current) {
-        return current;
-      }
-      return {
-        type: 'success',
-        levelLabel: selectedLevel.label,
-        timeTaken,
-      };
-    });
+    showResultModal('success', timeTaken);
 
     if (onAddRecord) {
       const generatedId = generateClientId();
@@ -111,18 +118,9 @@ const GamePage = ({ onAddRecord }) => {
     if (timeLeft === 0 && !timerActive) {
       stopTimer();
       setStatus('timeout');
-      setResultModal((current) => {
-        if (current) {
-          return current;
-        }
-        return {
-          type: 'timeout',
-          levelLabel: selectedLevel.label,
-          timeTaken: selectedLevel.timeLimit,
-        };
-      });
+      showResultModal('timeout', selectedLevel.timeLimit);
     }
-  }, [selectedLevel, stopTimer, timeLeft, timerActive]);
+  }, [selectedLevel, showResultModal, stopTimer, timeLeft, timerActive]);
 
   const handleFirstFlip = () => {
     if (!timerActive && timeLeft > 0) {
