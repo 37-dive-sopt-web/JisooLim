@@ -50,20 +50,21 @@ const GameGrid = ({
   };
 
   return (
-    <div
-      className="grid w-full gap-3"
+    <ul
+      className="m-0 grid w-full list-none gap-3 p-0"
       style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
     >
       {cardValues.map((value, index) => (
-        <GameCard
-          key={`${value}-${index}`}
-          value={value}
-          isFlipped={flipped[index]}
-          isMatched={matched[index]}
-          onClick={() => handleCardSelection(index)}
-        />
+        <li key={`${value}-${index}`}>
+          <GameCard
+            value={value}
+            isFlipped={flipped[index]}
+            isMatched={matched[index]}
+            onClick={() => handleCardSelection(index)}
+          />
+        </li>
       ))}
-    </div>
+    </ul>
   );
 };
 

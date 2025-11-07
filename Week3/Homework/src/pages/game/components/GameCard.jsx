@@ -8,7 +8,7 @@ const GameCard = ({
     type="button"
     aria-pressed={isFlipped}
     onClick={onClick}
-    className={`relative aspect-square overflow-hidden rounded-xl focus-visible:outline focus-visible:outline-(--card-outline) ${
+    className={`relative block aspect-square w-full overflow-hidden rounded-xl focus-visible:outline focus-visible:outline-(--card-outline) ${
       isMatched ? 'cursor-default opacity-95' : 'cursor-pointer'
     }`}
   >

@@ -15,31 +15,59 @@ const RankingBoard = ({ records = [], onReset }) => {
         </button>
       </div>
       <div className="mt-4 flex flex-1 flex-col overflow-hidden rounded-3xl bg-white/75 ring-1 ring-(--gray-light)">
-        <div className="grid h-14 grid-cols-[72px_minmax(0,1fr)_140px_200px] items-center justify-items-center rounded-t-3xl bg-[#cde6ff] px-6 text-sm font-bold text-(--gray-dark)">
-          <span>순위</span>
-          <span>레벨</span>
-          <span>클리어 시간(초)</span>
-          <span>기록 시각</span>
-        </div>
-        <div className="flex flex-1 flex-col overflow-y-auto">
-          {hasRecords ? (
-            records.map((record, index) => (
-              <div
-                key={record.id ?? `${record.levelId}-${record.timestamp}-${index}`}
-                className="grid grid-cols-[72px_minmax(0,1fr)_140px_200px] items-center justify-items-center border-t border-[rgba(63,72,82,0.08)] px-6 py-4 text-sm font-semibold text-(--gray-dark) odd:bg-white/55"
-              >
-                <span>{index + 1}</span>
-                <span className="text-(--black)">{record.levelLabel ?? record.levelId}</span>
-                <span>{formatSeconds(record.clearSeconds)}</span>
-                <span>{formatTimestamp(record.timestamp)}</span>
-              </div>
-            ))
-          ) : (
-            <div className="flex flex-1 items-center justify-center px-6 text-center text-sm font-semibold text-(--gray-dark)">
-              아직 등록된 클리어 기록이 없어요
-            </div>
-          )}
-        </div>
+        {hasRecords ? (
+          <div className="flex-1 overflow-y-auto">
+            <table
+              aria-label="랭킹 기록"
+              className="w-full border-collapse text-sm font-semibold text-(--gray-dark)"
+            >
+              <thead className="bg-[#cde6ff] text-(--gray-dark)">
+                <tr>
+                  <th
+                    scope="col"
+                    className="h-14 w-[72px] px-6 text-center font-bold"
+                  >
+                    순위
+                  </th>
+                  <th scope="col" className="px-6 text-left font-bold">
+                    레벨
+                  </th>
+                  <th scope="col" className="px-6 text-center font-bold">
+                    클리어 시간(초)
+                  </th>
+                  <th scope="col" className="px-6 text-center font-bold">
+                    기록 시각
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {records.map((record, index) => (
+                  <tr
+                    key={record.id ?? `${record.levelId}-${record.timestamp}-${index}`}
+                    className="border-t border-[rgba(63,72,82,0.08)] odd:bg-white/55"
+                  >
+                    <th scope="row" className="px-6 py-4 text-center font-semibold">
+                      {index + 1}
+                    </th>
+                    <td className="px-6 py-4 text-left font-semibold text-(--black)">
+                      {record.levelLabel ?? record.levelId}
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      {formatSeconds(record.clearSeconds)}
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      {formatTimestamp(record.timestamp)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="flex flex-1 items-center justify-center px-6 text-center text-sm font-semibold text-(--gray-dark)">
+            아직 등록된 클리어 기록이 없어요
+          </div>
+        )}
       </div>
     </div>
   );

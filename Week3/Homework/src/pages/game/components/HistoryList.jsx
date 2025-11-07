@@ -17,8 +17,8 @@ const HistoryList = ({ history = [] }) => {
       <div ref={scrollAreaRef} className="relative flex-1 min-h-0">
         {hasHistory ? (
           <ul
-            className="flex flex-col gap-2 overflow-y-auto pr-1"
-            style={historyHeight ? { height: historyHeight } : undefined}
+            className="flex h-full flex-col gap-2 overflow-y-auto pr-1"
+            style={historyHeight ? { height: historyHeight } : { height: '100%' }}
           >
             {history.map((entry) => (
               <li
@@ -42,8 +42,8 @@ const HistoryList = ({ history = [] }) => {
           </ul>
         ) : (
           <div
-            className="flex items-center justify-center rounded-xl bg-white/70 px-4 py-6"
-            style={historyHeight ? { height: historyHeight } : undefined}
+            className="flex h-full items-center justify-center rounded-xl bg-white/70 px-4 py-6"
+            style={historyHeight ? { height: historyHeight } : { height: '100%' }}
           >
             <p className="text-sm font-semibold text-(--gray-dark)">
               아직 뒤집은 카드가 없어요

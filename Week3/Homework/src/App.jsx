@@ -27,7 +27,7 @@ const App = () => {
     <div className="min-h-screen bg-(--gray-extra-light)">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-10">
         <Header activeTab={activeTab} onTabChange={setActiveTab} />
-        <section className="rounded-3xl bg-(--white) p-10 shadow-sm">
+        <main className="rounded-3xl bg-(--white) p-10 shadow-sm">
           <div className="flex items-center gap-4">
             <h2 className="text-2xl font-bold text-(--black)">{headingText}</h2>
           </div>
@@ -39,7 +39,7 @@ const App = () => {
               onResetRecords={resetRankingRecords}
             />
           )}
-        </section>
+        </main>
       </div>
     </div>
   );
