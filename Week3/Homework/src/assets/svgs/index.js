@@ -1,0 +1,1 @@
+export { default as IcDownarrow } from "./icDownarrow.jsx";

@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+:root {
+  --gray-light: #e7e8ea;
+  --gray: #4b5563;
+  --gray-dark: #3f4852;
+  --black: #1f2933;
+  --white: #ffffff;
+  --card-front: #fdf6c6;
+  --card-back: #f4c542;
+  --card-outline: #d09c2c;
+  --peach: #f79c87;
+  --peach-dark: #f57f63;
+  --green: #2f9d88;
+}
