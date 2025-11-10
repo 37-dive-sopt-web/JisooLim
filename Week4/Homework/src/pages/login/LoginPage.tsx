@@ -29,7 +29,7 @@ function LoginPage() {
             />
           </label>
         </form>
-        <Button text="로그인" />
+        <Button text="로그인" type="submit" />
         <Link className={s.signup} to="/signup">
           회원가입
         </Link>
