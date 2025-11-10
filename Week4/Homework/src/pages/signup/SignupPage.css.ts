@@ -28,7 +28,6 @@ export const title = style({
   color: colors.black01,
 });
 
-
 export const form = style({
   display: "flex",
   flexDirection: "column",
@@ -47,4 +46,16 @@ export const singleAction = style({
 
 export const actionButton = style({
   flex: 1,
+});
+
+export const back = style({
+  textAlign: "center",
+  color: colors.black01,
+  fontWeight: 600,
+  fontSize: "0.9rem",
+});
+
+export const backLink = style({
+  color: colors.blue01,
+  textDecoration: "none",
 });
