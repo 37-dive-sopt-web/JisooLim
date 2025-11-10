@@ -21,6 +21,7 @@ const LoginPage = () => {
             type="password"
             label="비밀번호"
             placeholder="비밀번호를 입력하세요"
+            toggleVisibility
           />
         </form>
         <Button text="로그인" type="submit" />
