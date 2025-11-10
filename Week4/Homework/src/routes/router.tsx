@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router";
-import LoginPage from "@/pages/LoginPage";
+import LoginPage from "@/pages/login/LoginPage";
 import SignupPage from "@/pages/SignupPage";
 import MyPage from "@/pages/MyPage";
 import MembersPage from "@/pages/MembersPage";
