@@ -7,7 +7,7 @@ interface ButtonProps {
   disabled?: boolean;
 }
 
-function Button({ text, type = "button", onClick, disabled }: ButtonProps) {
+const Button = ({ text, type = "button", onClick, disabled }: ButtonProps) => {
   return (
     <button
       className={styles.buttonContainer}
@@ -18,6 +18,6 @@ function Button({ text, type = "button", onClick, disabled }: ButtonProps) {
       {text}
     </button>
   );
-}
+};
 
 export default Button;

@@ -35,34 +35,6 @@ export const form = style({
   marginBottom: "1.3rem",
 });
 
-export const label = style({
-  display: "flex",
-  flexDirection: "column",
-  gap: "0.4rem",
-  fontSize: "0.95rem",
-  fontWeight: 600,
-  color: colors.black01,
-});
-
-export const input = style({
-  width: "100%",
-  borderRadius: "0.5rem",
-  border: `0.1rem solid ${colors.blue02}`,
-  padding: "0.5rem 1rem",
-  fontSize: "1rem",
-  backgroundColor: colors.white01,
-  selectors: {
-    "&::placeholder": {
-      color: colors.black01,
-      opacity: 0.5,
-    },
-    "&:focus": {
-      outline: "none",
-      borderColor: colors.blue01,
-    },
-  },
-});
-
 export const signup = style({
   textAlign: "center",
   color: colors.blue01,
