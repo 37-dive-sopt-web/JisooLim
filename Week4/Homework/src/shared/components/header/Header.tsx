@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { deleteUserAccount } from "@/api";
 import { STORAGE_KEYS } from "@/shared/constants/storage";
 import IcMenubar from "@/assets/svgs/IcMenubar";
@@ -45,6 +45,7 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 const Header = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isWithdrawalModalOpen, setIsWithdrawalModalOpen] = useState(false);
