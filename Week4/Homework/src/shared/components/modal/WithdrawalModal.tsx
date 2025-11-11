@@ -6,12 +6,14 @@ interface WithdrawalModalProps {
   isOpen: boolean;
   onCancel: () => void;
   onConfirm: () => void;
+  isLoading?: boolean;
 }
 
 const WithdrawalModal = ({
   isOpen,
   onCancel,
   onConfirm,
+  isLoading = false,
 }: WithdrawalModalProps) => {
   if (!isOpen) return null;
 
@@ -41,6 +43,7 @@ const WithdrawalModal = ({
             fullWidth={false}
             className={styles.actionButton}
             onClick={onCancel}
+            disabled={isLoading}
           />
           <Button
             text="회원 탈퇴"
@@ -49,6 +52,7 @@ const WithdrawalModal = ({
             fullWidth={false}
             className={styles.actionButton}
             onClick={onConfirm}
+            disabled={isLoading}
           />
         </div>
       </div>

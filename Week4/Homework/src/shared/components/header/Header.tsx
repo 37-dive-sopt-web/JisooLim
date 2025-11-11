@@ -1,12 +1,15 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { deleteUserAccount } from "@/api";
 import IcMenubar from "@/assets/svgs/IcMenubar";
 import WithdrawalModal from "@/shared/components/modal/WithdrawalModal";
 import * as s from "./Header.css";
 
+type NavAction = "logout" | "withdraw";
+
 type NavItem =
   | { id: string; label: string; type: "link"; to: string }
-  | { id: string; label: string; type: "button" };
+  | { id: NavAction; label: string; type: "button" };
 
 const NAV_ITEMS: NavItem[] = [
   { id: "profile", label: "내 정보", type: "link", to: "/mypage" },
@@ -16,22 +19,51 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 const Header = () => {
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isWithdrawalModalOpen, setIsWithdrawalModalOpen] = useState(false);
+  const [isWithdrawing, setIsWithdrawing] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
   const handleMenuItemClick = () => setIsMenuOpen(false);
   const openWithdrawalModal = () => setIsWithdrawalModalOpen(true);
   const closeWithdrawalModal = () => setIsWithdrawalModalOpen(false);
 
-  const handleNavButtonClick = (itemId: string) => {
+  const handleLogout = () => {
+    window.localStorage.removeItem("userId");
+    navigate("/");
+  };
+
+  const handleNavButtonClick = (itemId: NavAction) => {
     if (itemId === "withdraw") {
       openWithdrawalModal();
     }
+    if (itemId === "logout") {
+      handleLogout();
+    }
   };
 
-  const handleConfirmWithdrawal = () => {
-    setIsWithdrawalModalOpen(false);
+  const handleConfirmWithdrawal = async () => {
+    if (isWithdrawing) return;
+    const storedId = window.localStorage.getItem("userId");
+    if (!storedId) {
+      alert("로그인 정보가 없습니다.");
+      return;
+    }
+    try {
+      setIsWithdrawing(true);
+      await deleteUserAccount(storedId);
+      alert("회원 탈퇴가 완료되었습니다.");
+      window.localStorage.removeItem("userId");
+      closeWithdrawalModal();
+      navigate("/");
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "회원 탈퇴에 실패했습니다.";
+      alert(message);
+    } finally {
+      setIsWithdrawing(false);
+    }
   };
 
   return (
@@ -106,6 +138,7 @@ const Header = () => {
         isOpen={isWithdrawalModalOpen}
         onCancel={closeWithdrawalModal}
         onConfirm={handleConfirmWithdrawal}
+        isLoading={isWithdrawing}
       />
     </header>
   );

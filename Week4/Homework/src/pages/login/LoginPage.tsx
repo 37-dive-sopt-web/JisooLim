@@ -14,7 +14,13 @@ const LoginPage = () => {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const { userId } = await login({ username, password });
+      const response = await login({ username, password });
+      const userId = response.data.userId;
+
+      if (typeof userId !== "number") {
+        throw new Error("사용자 정보를 불러오지 못했어요");
+      }
+
       window.localStorage.setItem("userId", String(userId));
       navigate("/mypage");
     } catch (error) {

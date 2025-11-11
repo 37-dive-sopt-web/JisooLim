@@ -6,8 +6,13 @@ export interface LoginPayload {
 }
 
 export interface LoginResponse {
-  userId: number;
+  success: boolean;
+  code: string;
   message: string;
+  data: {
+    userId: number;
+    message?: string;
+  };
 }
 
 export interface SignupPayload {
@@ -46,5 +51,19 @@ export const signup = async (payload: SignupPayload) => {
   const response = await httpClient
     .post("api/v1/users", { json: payload })
     .json<SignupResponse>();
+  return response;
+};
+
+export interface DeleteUserResponse {
+  success: boolean;
+  code: string;
+  message: string;
+  data: Record<string, never>;
+}
+
+export const deleteUserAccount = async (userId: string | number) => {
+  const response = await httpClient
+    .delete(`api/v1/users/${userId}`)
+    .json<DeleteUserResponse>();
   return response;
 };
