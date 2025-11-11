@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router";
-import { deleteUserAccount, getUserProfile } from "@/api";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router";
+import { deleteUserAccount } from "@/api";
 import { STORAGE_KEYS } from "@/shared/constants/storage";
 import IcMenubar from "@/assets/svgs/IcMenubar";
 import WithdrawalModal from "@/shared/components/modal/WithdrawalModal";
+import useHeaderUser from "./hooks/useHeaderUser";
 import * as s from "./Header.css";
 
 type NavAction = "logout" | "withdraw";
@@ -44,50 +45,11 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 const Header = () => {
-  const location = useLocation();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isWithdrawalModalOpen, setIsWithdrawalModalOpen] = useState(false);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
-  const [userName, setUserName] = useState("");
-
-  useEffect(() => {
-    const storedName = window.localStorage.getItem(STORAGE_KEYS.userName);
-    if (storedName) {
-      setUserName(storedName);
-      return;
-    }
-
-    const storedId = window.localStorage.getItem(STORAGE_KEYS.userId);
-    if (!storedId) {
-      setUserName("");
-      return;
-    }
-
-    let ignore = false;
-
-    const fetchUserName = async () => {
-      try {
-        const profile = await getUserProfile(storedId);
-        if (ignore) return;
-        const name = profile.name ?? "";
-        setUserName(name);
-        if (name) {
-          window.localStorage.setItem(STORAGE_KEYS.userName, name);
-        }
-      } catch {
-        if (!ignore) {
-          setUserName("");
-        }
-      }
-    };
-
-    void fetchUserName();
-
-    return () => {
-      ignore = true;
-    };
-  }, [location.pathname]);
+  const { userName, resetUserName } = useHeaderUser();
 
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
   const handleMenuItemClick = () => setIsMenuOpen(false);
@@ -97,7 +59,7 @@ const Header = () => {
   const handleLogout = () => {
     window.localStorage.removeItem(STORAGE_KEYS.userId);
     window.localStorage.removeItem(STORAGE_KEYS.userName);
-    setUserName("");
+    resetUserName();
     navigate("/");
   };
 
@@ -123,7 +85,7 @@ const Header = () => {
       alert("회원 탈퇴가 완료되었습니다.");
       window.localStorage.removeItem(STORAGE_KEYS.userId);
       window.localStorage.removeItem(STORAGE_KEYS.userName);
-      setUserName("");
+      resetUserName();
       closeWithdrawalModal();
       navigate("/");
     } catch (error) {
