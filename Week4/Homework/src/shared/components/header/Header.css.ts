@@ -47,7 +47,13 @@ export const linkText = style({
   textDecoration: "none",
   color: colors.white01,
   fontWeight: 600,
+  transition: "color 0.2s ease",
 });
+
+export const activeLink = style({
+  color: colors.yellow01,
+});
+
 
 export const button = style({
   border: "none",
@@ -119,4 +125,8 @@ export const mobileMenuItem = style({
   padding: "0.5rem 0",
   textAlign: "left",
   cursor: "pointer",
+});
+
+export const activeMobileLink = style({
+  color: colors.yellow01,
 });

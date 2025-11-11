@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useLocation } from "react-router";
 import { deleteUserAccount } from "@/api";
 import IcMenubar from "@/assets/svgs/IcMenubar";
 import WithdrawalModal from "@/shared/components/modal/WithdrawalModal";
@@ -7,18 +7,43 @@ import * as s from "./Header.css";
 
 type NavAction = "logout" | "withdraw";
 
-type NavItem =
-  | { id: string; label: string; type: "link"; to: string }
-  | { id: NavAction; label: string; type: "button" };
+type NavItem = LinkNavItem | ButtonNavItem;
+
+interface LinkNavItem {
+  id: string;
+  label: string;
+  type: "link";
+  to: string;
+  exact?: boolean;
+}
+
+interface ButtonNavItem {
+  id: NavAction;
+  label: string;
+  type: "button";
+}
 
 const NAV_ITEMS: NavItem[] = [
-  { id: "profile", label: "내 정보", type: "link", to: "/mypage" },
-  { id: "members", label: "회원 조회", type: "link", to: "/mypage/members" },
+  {
+    id: "profile",
+    label: "내 정보",
+    type: "link",
+    to: "/mypage",
+    exact: true,
+  },
+  {
+    id: "members",
+    label: "회원 조회",
+    type: "link",
+    to: "/mypage/members",
+    exact: true,
+  },
   { id: "logout", label: "로그아웃", type: "button" },
   { id: "withdraw", label: "회원 탈퇴", type: "button" },
 ];
 
 const Header = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isWithdrawalModalOpen, setIsWithdrawalModalOpen] = useState(false);
@@ -77,7 +102,19 @@ const Header = () => {
         <section className={s.rightSection}>
           {NAV_ITEMS.map((item) =>
             item.type === "link" ? (
-              <Link key={item.id} to={item.to} className={s.linkText}>
+              <Link
+                key={item.id}
+                to={item.to}
+                className={`${s.linkText} ${
+                  (
+                    item.exact
+                      ? location.pathname === item.to
+                      : location.pathname.startsWith(item.to)
+                  )
+                    ? s.activeLink
+                    : ""
+                }`}
+              >
                 {item.label}
               </Link>
             ) : (
@@ -89,7 +126,7 @@ const Header = () => {
               >
                 {item.label}
               </button>
-            ),
+            )
           )}
         </section>
 
@@ -113,7 +150,15 @@ const Header = () => {
             <Link
               key={item.id}
               to={item.to}
-              className={s.mobileMenuItem}
+              className={`${s.mobileMenuItem} ${
+                (
+                  item.exact
+                    ? location.pathname === item.to
+                    : location.pathname.startsWith(item.to)
+                )
+                  ? s.activeMobileLink
+                  : ""
+              }`}
               onClick={handleMenuItemClick}
             >
               {item.label}
@@ -130,7 +175,7 @@ const Header = () => {
             >
               {item.label}
             </button>
-          ),
+          )
         )}
       </nav>
 
