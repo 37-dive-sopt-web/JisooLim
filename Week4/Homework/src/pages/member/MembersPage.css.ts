@@ -26,3 +26,26 @@ export const title = style({
   textAlign: "center",
   color: colors.black01,
 });
+
+export const form = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: "1rem",
+});
+
+export const result = style({
+  marginTop: "1rem",
+  borderTop: `1px solid ${colors.gray01}`,
+  paddingTop: "1rem",
+  display: "flex",
+  flexDirection: "column",
+  gap: "0.75rem",
+});
+
+export const resultRow = style({
+  display: "flex",
+  justifyContent: "space-between",
+  fontSize: "1rem",
+  color: colors.black01,
+  fontWeight: 600,
+});
