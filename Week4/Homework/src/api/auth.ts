@@ -90,3 +90,26 @@ export const getUserProfile = async (userId: string | number) => {
     .json<UserProfileResponse>();
   return response.data;
 };
+
+export interface UpdateUserPayload {
+  name: string;
+  email: string;
+  age: number;
+}
+
+interface UpdateUserResponse {
+  success: boolean;
+  code: string;
+  message: string;
+  data: UserProfile;
+}
+
+export const updateUserProfile = async (
+  userId: number,
+  payload: UpdateUserPayload,
+) => {
+  const response = await httpClient
+    .patch(`api/v1/users/${userId}`, { json: payload })
+    .json<UpdateUserResponse>();
+  return response.data;
+};
