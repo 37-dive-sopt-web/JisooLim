@@ -6,27 +6,33 @@ const USERS_BASE_PATH = "api/v1/users";
 
 type UserId = string | number;
 
-const extractData = async <T>(promise: Promise<ApiResponse<T>>) => {
-  const response = await promise;
-  return response.data;
-};
-
-export interface LoginPayload {
-  username: string;
-  password: string;
-}
-
-interface LoginResponseData {
-  userId: number;
-}
-
-export interface SignupPayload {
+type UserFields = {
   username: string;
   password: string;
   name: string;
   email: string;
   age: number;
+};
+
+type UserRecord = Omit<UserFields, "password"> & {
+  id: number;
+  status: string;
+};
+
+type UserContact = Pick<UserFields, "name" | "email" | "age">;
+
+const extractData = async <T>(promise: Promise<ApiResponse<T>>) => {
+  const response = await promise;
+  return response.data;
+};
+
+export type LoginPayload = Pick<UserFields, "username" | "password">;
+
+interface LoginResponseData {
+  userId: number;
 }
+
+export type SignupPayload = UserFields;
 
 export const login = (payload: LoginPayload) =>
   extractData(
@@ -35,14 +41,7 @@ export const login = (payload: LoginPayload) =>
       .json<ApiResponse<LoginResponseData>>(),
   );
 
-export interface SignupResponseData {
-  id: number;
-  username: string;
-  name: string;
-  email: string;
-  age: number;
-  status: string;
-}
+type SignupResponseData = UserRecord;
 
 export const signup = (payload: SignupPayload) =>
   extractData(
@@ -56,14 +55,7 @@ export const deleteUserAccount = (userId: UserId) =>
     .delete(`${USERS_BASE_PATH}/${userId}`)
     .json<ApiResponse<Record<string, never>>>();
 
-export interface UserProfile {
-  id: number;
-  username: string;
-  name: string;
-  email: string;
-  age: number;
-  status: string;
-}
+export type UserProfile = UserRecord;
 
 export const getUserProfile = (userId: UserId) =>
   extractData(
@@ -72,11 +64,7 @@ export const getUserProfile = (userId: UserId) =>
       .json<ApiResponse<UserProfile>>(),
   );
 
-export interface UpdateUserPayload {
-  name: string;
-  email: string;
-  age: number;
-}
+export type UpdateUserPayload = UserContact;
 
 export const updateUserProfile = (userId: UserId, payload: UpdateUserPayload) =>
   extractData(
