@@ -10,10 +10,41 @@ export interface LoginResponse {
   message: string;
 }
 
+export interface SignupPayload {
+  username: string;
+  password: string;
+  name: string;
+  email: string;
+  age: number;
+}
+
 export const login = async (payload: LoginPayload) => {
   const response = await httpClient
     .post("api/v1/auth/login", { json: payload })
     .json<LoginResponse>();
 
+  return response;
+};
+
+export interface SignupResponseData {
+  id: number;
+  username: string;
+  name: string;
+  email: string;
+  age: number;
+  status: string;
+}
+
+export interface SignupResponse {
+  success: boolean;
+  code: string;
+  message: string;
+  data: SignupResponseData;
+}
+
+export const signup = async (payload: SignupPayload) => {
+  const response = await httpClient
+    .post("api/v1/users", { json: payload })
+    .json<SignupResponse>();
   return response;
 };

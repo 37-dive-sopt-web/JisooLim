@@ -1,12 +1,69 @@
-import { Link } from "react-router";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router";
+import { signup } from "@/api";
 import Button from "@/shared/components/button/Button";
 import Input from "@/shared/components/input/Input";
 import * as s from "./SignupPage.css";
 import useSignupForm from "./hooks/useSignupForm";
 
 const SignupPage = () => {
-  const { isFirstStep, isLastStep, disableStep, onChange, next, prev, fields } =
-    useSignupForm();
+  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const {
+    isFirstStep,
+    isLastStep,
+    disableStep,
+    onChange,
+    next,
+    prev,
+    fields,
+    formValues,
+  } = useSignupForm();
+
+  const handleSignup = async () => {
+    if (isSubmitting) return;
+    const username = formValues.id?.trim() ?? "";
+    const password = formValues.password ?? "";
+    const name = formValues.name?.trim() ?? "";
+    const email = formValues.email?.trim() ?? "";
+    const ageInput = formValues.age?.trim() ?? "";
+    const ageValue = Number(ageInput);
+
+    if (
+      !username ||
+      !password ||
+      !name ||
+      !email ||
+      !ageInput ||
+      Number.isNaN(ageValue)
+    ) {
+      alert("모든 필드를 올바르게 입력해 주세요.");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      await signup({ username, password, name, email, age: ageValue });
+      alert(`${name}님 반갑습니다!`);
+      navigate("/");
+    } catch (error) {
+      if (error instanceof Error && error.message === "이미 존재하는 사용자명입니다.") {
+        alert(error.message);
+      } else {
+        alert("회원가입에 실패했어요.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleFinish = () => {
+    if (isLastStep) {
+      void handleSignup();
+    } else {
+      next();
+    }
+  };
 
   return (
     <main className={s.page}>
@@ -32,8 +89,8 @@ const SignupPage = () => {
               <Button
                 text={isLastStep ? "가입 완료" : "다음"}
                 type="button"
-                onClick={isLastStep ? undefined : next}
-                disabled={disableStep}
+                onClick={handleFinish}
+                disabled={disableStep || isSubmitting}
               />
             </div>
           </div>

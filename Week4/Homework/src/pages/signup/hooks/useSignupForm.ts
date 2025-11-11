@@ -14,12 +14,20 @@ interface FormValues {
   id?: string;
   password?: string;
   passwordConfirm?: string;
+  name?: string;
+  email?: string;
+  age?: string;
 }
 
 type FieldName = keyof FormValues;
 
 const isFieldKey = (n: StepField["name"]): n is FieldName =>
-  n === "id" || n === "password" || n === "passwordConfirm";
+  n === "id" ||
+  n === "password" ||
+  n === "passwordConfirm" ||
+  n === "name" ||
+  n === "email" ||
+  n === "age";
 
 const PASSWORD_STEP_ID = "password";
 const ACCOUNT_STEP_ID = "account";
@@ -36,25 +44,29 @@ const useSignupForm = () => {
   const password = formValues.password ?? "";
   const passwordConfirm = formValues.passwordConfirm ?? "";
 
-  const passwordRuleErrors = getPasswordRuleErrors(password);
-  const pwPolicyErr = password ? passwordRuleErrors[0] : undefined;
-  const doPasswordsMatch =
-    password && passwordConfirm ? password === passwordConfirm : false;
-  const pwMismatchErr =
-    password && passwordConfirm && !doPasswordsMatch
+  const name = formValues.name ?? "";
+  const email = formValues.email ?? "";
+  const age = formValues.age ?? "";
+
+  const pwErrors = getPasswordRuleErrors(password);
+  const pwPolicyError = password ? pwErrors[0] : undefined;
+  const pwMatch = password && passwordConfirm ? password === passwordConfirm : false;
+  const pwMismatchError =
+    password && passwordConfirm && !pwMatch
       ? "비밀번호가 일치하지 않습니다."
       : undefined;
 
   const disablePwStep =
     currentStep.id === PASSWORD_STEP_ID &&
-    (!password ||
-      !passwordConfirm ||
-      !isPasswordPolicyValid(password) ||
-      !doPasswordsMatch);
+    (!password || !passwordConfirm || !isPasswordPolicyValid(password) || !pwMatch);
 
   const disableIdStep = currentStep.id === ACCOUNT_STEP_ID && !isIdValid(id);
 
-  const disableStep = disablePwStep || disableIdStep;
+  const disableProfileStep =
+    currentStep.id === "profile" &&
+    (!name.trim() || !email.trim() || !age.trim());
+
+  const disableStep = disablePwStep || disableIdStep || disableProfileStep;
 
   const onChange = (name: FieldName | undefined, value: string) => {
     if (!name) return;
@@ -63,8 +75,8 @@ const useSignupForm = () => {
 
   const getErrMsg = (name: FieldName | undefined) => {
     if (!name) return undefined;
-    if (name === "password") return pwPolicyErr;
-    if (name === "passwordConfirm") return pwMismatchErr;
+    if (name === "password") return pwPolicyError;
+    if (name === "passwordConfirm") return pwMismatchError;
     if (name === "id") return getIdErrorMessage(formValues.id ?? "");
     return undefined;
   };
