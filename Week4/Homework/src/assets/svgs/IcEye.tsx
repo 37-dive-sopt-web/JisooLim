@@ -1,5 +1,6 @@
+import * as React from "react";
 import type { SVGProps } from "react";
-const SvgEye = (props: SVGProps<SVGSVGElement>) => (
+const SvgIcEye = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={512}
@@ -13,4 +14,4 @@ const SvgEye = (props: SVGProps<SVGSVGElement>) => (
     </g>
   </svg>
 );
-export default SvgEye;
+export default SvgIcEye;

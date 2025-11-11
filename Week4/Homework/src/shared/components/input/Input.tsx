@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { InputHTMLAttributes } from "react";
-import { Eye, EyeOff } from "@/assets/svgs";
+import { IcEye, IcEyeoff } from "@/assets/svgs";
 import * as styles from "./Input.css";
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -36,9 +36,9 @@ const Input = ({
             onClick={() => setShowPassword((prev) => !prev)}
           >
             {showPassword ? (
-              <EyeOff width={20} height={20} />
+              <IcEyeoff width={20} height={20} />
             ) : (
-              <Eye width={20} height={20} />
+              <IcEye width={20} height={20} />
             )}
           </button>
         )}
