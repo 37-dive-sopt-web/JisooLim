@@ -1,5 +1,5 @@
 import { style } from "@vanilla-extract/css";
-import { colors } from "@/shared/styles/token/color.css";
+import { colors } from "@/shared/styles/token";
 
 export const page = style({
   minHeight: "100vh",

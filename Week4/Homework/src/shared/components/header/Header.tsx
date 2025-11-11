@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router";
 import IcMenubar from "@/assets/svgs/IcMenubar";
+import WithdrawalModal from "@/shared/components/modal/WithdrawalModal";
 import * as s from "./Header.css";
 
 type NavItem =
@@ -16,9 +17,22 @@ const NAV_ITEMS: NavItem[] = [
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isWithdrawalModalOpen, setIsWithdrawalModalOpen] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
   const handleMenuItemClick = () => setIsMenuOpen(false);
+  const openWithdrawalModal = () => setIsWithdrawalModalOpen(true);
+  const closeWithdrawalModal = () => setIsWithdrawalModalOpen(false);
+
+  const handleNavButtonClick = (itemId: string) => {
+    if (itemId === "withdraw") {
+      openWithdrawalModal();
+    }
+  };
+
+  const handleConfirmWithdrawal = () => {
+    setIsWithdrawalModalOpen(false);
+  };
 
   return (
     <header className={s.header}>
@@ -35,7 +49,12 @@ const Header = () => {
                 {item.label}
               </Link>
             ) : (
-              <button key={item.id} className={s.button} type="button">
+              <button
+                key={item.id}
+                className={s.button}
+                type="button"
+                onClick={() => handleNavButtonClick(item.id)}
+              >
                 {item.label}
               </button>
             ),
@@ -72,13 +91,22 @@ const Header = () => {
               key={item.id}
               type="button"
               className={s.mobileMenuItem}
-              onClick={handleMenuItemClick}
+              onClick={() => {
+                handleMenuItemClick();
+                handleNavButtonClick(item.id);
+              }}
             >
               {item.label}
             </button>
           ),
         )}
       </nav>
+
+      <WithdrawalModal
+        isOpen={isWithdrawalModalOpen}
+        onCancel={closeWithdrawalModal}
+        onConfirm={handleConfirmWithdrawal}
+      />
     </header>
   );
 };
