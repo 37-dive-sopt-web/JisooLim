@@ -1,6 +1,7 @@
 import { useState, type FormEvent, type ChangeEvent } from "react";
 import { Link, useNavigate } from "react-router";
 import { login } from "@/api";
+import { STORAGE_KEYS } from "@/shared/constants/storage";
 import Button from "@/shared/components/button/Button";
 import Input from "@/shared/components/input/Input";
 import * as s from "./LoginPage.css";
@@ -38,7 +39,7 @@ const LoginPage = () => {
         throw new Error("사용자 정보를 불러오지 못했어요");
       }
 
-      window.localStorage.setItem("userId", String(userId));
+      window.localStorage.setItem(STORAGE_KEYS.userId, String(userId));
       navigate("/mypage");
     } catch (error) {
       const message = error instanceof Error ? error.message : "로그인 실패 😞";

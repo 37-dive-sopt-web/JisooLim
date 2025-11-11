@@ -1,4 +1,5 @@
 import ky from "ky";
+import { STORAGE_KEYS } from "@/shared/constants/storage";
 
 const rawBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -8,7 +9,7 @@ export const httpClient = ky.create({
   hooks: {
     beforeRequest: [
       (request) => {
-        const token = window.localStorage.getItem("accessToken");
+        const token = window.localStorage.getItem(STORAGE_KEYS.accessToken);
         if (token) {
           request.headers.set("Authorization", `Bearer ${token}`);
         }

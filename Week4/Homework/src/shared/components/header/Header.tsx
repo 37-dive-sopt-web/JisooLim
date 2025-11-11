@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router";
 import { deleteUserAccount } from "@/api";
+import { STORAGE_KEYS } from "@/shared/constants/storage";
 import IcMenubar from "@/assets/svgs/IcMenubar";
 import WithdrawalModal from "@/shared/components/modal/WithdrawalModal";
 import * as s from "./Header.css";
@@ -55,7 +56,7 @@ const Header = () => {
   const closeWithdrawalModal = () => setIsWithdrawalModalOpen(false);
 
   const handleLogout = () => {
-    window.localStorage.removeItem("userId");
+    window.localStorage.removeItem(STORAGE_KEYS.userId);
     navigate("/");
   };
 
@@ -70,7 +71,7 @@ const Header = () => {
 
   const handleConfirmWithdrawal = async () => {
     if (isWithdrawing) return;
-    const storedId = window.localStorage.getItem("userId");
+    const storedId = window.localStorage.getItem(STORAGE_KEYS.userId);
     if (!storedId) {
       alert("로그인 정보가 없습니다.");
       return;
@@ -79,7 +80,7 @@ const Header = () => {
       setIsWithdrawing(true);
       await deleteUserAccount(storedId);
       alert("회원 탈퇴가 완료되었습니다.");
-      window.localStorage.removeItem("userId");
+      window.localStorage.removeItem(STORAGE_KEYS.userId);
       closeWithdrawalModal();
       navigate("/");
     } catch (error) {

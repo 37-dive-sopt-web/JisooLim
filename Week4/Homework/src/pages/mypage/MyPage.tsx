@@ -5,6 +5,7 @@ import {
   updateUserProfile,
   type UserProfile,
 } from "@/api";
+import { STORAGE_KEYS } from "@/shared/constants/storage";
 import Button from "@/shared/components/button/Button";
 import Input from "@/shared/components/input/Input";
 import * as s from "./MyPage.css";
@@ -21,7 +22,7 @@ const MyPage = () => {
   });
 
   useEffect(() => {
-    const storedId = window.localStorage.getItem("userId");
+    const storedId = window.localStorage.getItem(STORAGE_KEYS.userId);
     if (!storedId) {
       navigate("/");
       return;
