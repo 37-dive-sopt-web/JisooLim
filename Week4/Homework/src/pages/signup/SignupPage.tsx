@@ -1,27 +1,12 @@
-import { useState } from "react";
 import { Link } from "react-router";
 import Button from "@/shared/components/button/Button";
 import Input from "@/shared/components/input/Input";
-import { STEP_FLOW } from "./flow";
 import * as s from "./SignupPage.css";
+import useSignupForm from "./hooks/useSignupForm";
 
 const SignupPage = () => {
-  const [stepIndex, setStepIndex] = useState(0);
-  const currentStep = STEP_FLOW[stepIndex];
-  const isFirstStep = stepIndex === 0;
-  const isLastStep = stepIndex === STEP_FLOW.length - 1;
-
-  const goToNextStep = () => {
-    if (!isLastStep) {
-      setStepIndex((prev) => Math.min(prev + 1, STEP_FLOW.length - 1));
-    }
-  };
-
-  const goToPreviousStep = () => {
-    if (!isFirstStep) {
-      setStepIndex((prev) => Math.max(prev - 1, 0));
-    }
-  };
+  const { isFirstStep, isLastStep, disableStep, onChange, next, prev, fields } =
+    useSignupForm();
 
   return (
     <main className={s.page}>
@@ -29,21 +14,26 @@ const SignupPage = () => {
         <h1 className={s.title}>회원가입</h1>
 
         <form className={s.form}>
-          {currentStep.fields.map((field) => (
-            <Input key={field.id} {...field} />
+          {fields.map((field) => (
+            <Input
+              key={field.id}
+              {...field}
+              onChange={(event) => onChange(field.name, event.target.value)}
+            />
           ))}
 
           <div className={isFirstStep ? s.singleAction : s.actions}>
             {!isFirstStep && (
               <div className={s.actionButton}>
-                <Button text="이전" type="button" onClick={goToPreviousStep} />
+                <Button text="이전" type="button" onClick={prev} />
               </div>
             )}
             <div className={s.actionButton}>
               <Button
                 text={isLastStep ? "가입 완료" : "다음"}
                 type="button"
-                onClick={isLastStep ? undefined : goToNextStep}
+                onClick={isLastStep ? undefined : next}
+                disabled={disableStep}
               />
             </div>
           </div>
