@@ -1,18 +1,23 @@
 import { httpClient } from "./httpClient";
+import type { ApiResponse } from "./types";
+
+const AUTH_BASE_PATH = "api/v1/auth";
+const USERS_BASE_PATH = "api/v1/users";
+
+type UserId = string | number;
+
+const extractData = async <T>(promise: Promise<ApiResponse<T>>) => {
+  const response = await promise;
+  return response.data;
+};
 
 export interface LoginPayload {
   username: string;
   password: string;
 }
 
-export interface LoginResponse {
-  success: boolean;
-  code: string;
-  message: string;
-  data: {
-    userId: number;
-    message?: string;
-  };
+interface LoginResponseData {
+  userId: number;
 }
 
 export interface SignupPayload {
@@ -23,13 +28,12 @@ export interface SignupPayload {
   age: number;
 }
 
-export const login = async (payload: LoginPayload) => {
-  const response = await httpClient
-    .post("api/v1/auth/login", { json: payload })
-    .json<LoginResponse>();
-
-  return response;
-};
+export const login = (payload: LoginPayload) =>
+  extractData(
+    httpClient
+      .post(`${AUTH_BASE_PATH}/login`, { json: payload })
+      .json<ApiResponse<LoginResponseData>>(),
+  );
 
 export interface SignupResponseData {
   id: number;
@@ -40,33 +44,17 @@ export interface SignupResponseData {
   status: string;
 }
 
-export interface SignupResponse {
-  success: boolean;
-  code: string;
-  message: string;
-  data: SignupResponseData;
-}
+export const signup = (payload: SignupPayload) =>
+  extractData(
+    httpClient
+      .post(USERS_BASE_PATH, { json: payload })
+      .json<ApiResponse<SignupResponseData>>(),
+  );
 
-export const signup = async (payload: SignupPayload) => {
-  const response = await httpClient
-    .post("api/v1/users", { json: payload })
-    .json<SignupResponse>();
-  return response;
-};
-
-export interface DeleteUserResponse {
-  success: boolean;
-  code: string;
-  message: string;
-  data: Record<string, never>;
-}
-
-export const deleteUserAccount = async (userId: string | number) => {
-  const response = await httpClient
-    .delete(`api/v1/users/${userId}`)
-    .json<DeleteUserResponse>();
-  return response;
-};
+export const deleteUserAccount = (userId: UserId) =>
+  httpClient
+    .delete(`${USERS_BASE_PATH}/${userId}`)
+    .json<ApiResponse<Record<string, never>>>();
 
 export interface UserProfile {
   id: number;
@@ -77,19 +65,12 @@ export interface UserProfile {
   status: string;
 }
 
-interface UserProfileResponse {
-  success: boolean;
-  code: string;
-  message: string;
-  data: UserProfile;
-}
-
-export const getUserProfile = async (userId: string | number) => {
-  const response = await httpClient
-    .get(`api/v1/users/${userId}`)
-    .json<UserProfileResponse>();
-  return response.data;
-};
+export const getUserProfile = (userId: UserId) =>
+  extractData(
+    httpClient
+      .get(`${USERS_BASE_PATH}/${userId}`)
+      .json<ApiResponse<UserProfile>>(),
+  );
 
 export interface UpdateUserPayload {
   name: string;
@@ -97,19 +78,9 @@ export interface UpdateUserPayload {
   age: number;
 }
 
-interface UpdateUserResponse {
-  success: boolean;
-  code: string;
-  message: string;
-  data: UserProfile;
-}
-
-export const updateUserProfile = async (
-  userId: number,
-  payload: UpdateUserPayload,
-) => {
-  const response = await httpClient
-    .patch(`api/v1/users/${userId}`, { json: payload })
-    .json<UpdateUserResponse>();
-  return response.data;
-};
+export const updateUserProfile = (userId: UserId, payload: UpdateUserPayload) =>
+  extractData(
+    httpClient
+      .patch(`${USERS_BASE_PATH}/${userId}`, { json: payload })
+      .json<ApiResponse<UserProfile>>(),
+  );

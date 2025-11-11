@@ -1,10 +1,13 @@
-export interface ApiSuccessResponse<TData> {
+export interface ApiResponse<TData> {
+  success: boolean;
+  code: string;
+  message: string;
   data: TData;
-  message?: string;
 }
 
 export interface ApiErrorResponse {
-  statusCode: number;
+  success: false;
+  code: string;
   message: string;
-  error?: string;
+  data?: unknown;
 }

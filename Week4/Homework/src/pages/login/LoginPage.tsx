@@ -1,21 +1,38 @@
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, type ChangeEvent } from "react";
 import { Link, useNavigate } from "react-router";
 import { login } from "@/api";
 import Button from "@/shared/components/button/Button";
 import Input from "@/shared/components/input/Input";
 import * as s from "./LoginPage.css";
+import { LOGIN_FIELDS } from "./fields";
+
+interface LoginForm {
+  username: string;
+  password: string;
+}
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const isDisabled = username.trim() === "" || password.trim() === "";
+  const [formValues, setFormValues] = useState<LoginForm>({
+    username: "",
+    password: "",
+  });
+
+  const isDisabled =
+    formValues.username.trim() === "" || formValues.password.trim() === "";
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setFormValues((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const response = await login({ username, password });
-      const userId = response.data.userId;
+      const { userId } = await login(formValues);
 
       if (typeof userId !== "number") {
         throw new Error("사용자 정보를 불러오지 못했어요");
@@ -34,26 +51,14 @@ const LoginPage = () => {
       <section className={s.box}>
         <h1 className={s.title}>로그인</h1>
         <form className={s.form} onSubmit={handleSubmit}>
-          <Input
-            id="login-id"
-            name="username"
-            label="아이디"
-            placeholder="아이디를 입력하세요"
-            value={username}
-            onChange={(event) => setUsername(event.target.value)}
-            autoComplete="username"
-          />
-          <Input
-            id="login-password"
-            name="password"
-            type="password"
-            label="비밀번호"
-            placeholder="비밀번호를 입력하세요"
-            toggleVisibility
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            autoComplete="current-password"
-          />
+          {LOGIN_FIELDS.map((input) => (
+            <Input
+              key={input.id}
+              {...input}
+              value={formValues[input.name as keyof LoginForm]}
+              onChange={handleChange}
+            />
+          ))}
           <Button text="로그인" type="submit" disabled={isDisabled} />
         </form>
         <Link className={s.signup} to="/signup">
