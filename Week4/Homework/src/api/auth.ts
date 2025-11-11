@@ -67,3 +67,26 @@ export const deleteUserAccount = async (userId: string | number) => {
     .json<DeleteUserResponse>();
   return response;
 };
+
+export interface UserProfile {
+  id: number;
+  username: string;
+  name: string;
+  email: string;
+  age: number;
+  status: string;
+}
+
+interface UserProfileResponse {
+  success: boolean;
+  code: string;
+  message: string;
+  data: UserProfile;
+}
+
+export const getUserProfile = async (userId: string | number) => {
+  const response = await httpClient
+    .get(`api/v1/users/${userId}`)
+    .json<UserProfileResponse>();
+  return response.data;
+};
