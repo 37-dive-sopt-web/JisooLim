@@ -62,6 +62,5 @@ export const toggleButton = style({
 
 export const error = style({
   fontSize: "0.85rem",
-  color: colors.black01,
-  opacity: 0.7,
+  color: colors.red01,
 });
