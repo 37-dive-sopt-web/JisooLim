@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router";
-import { deleteUserAccount } from "@/api";
+import { deleteUserAccount, getUserProfile } from "@/api";
 import { STORAGE_KEYS } from "@/shared/constants/storage";
 import IcMenubar from "@/assets/svgs/IcMenubar";
 import WithdrawalModal from "@/shared/components/modal/WithdrawalModal";
@@ -49,6 +49,45 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isWithdrawalModalOpen, setIsWithdrawalModalOpen] = useState(false);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    const storedName = window.localStorage.getItem(STORAGE_KEYS.userName);
+    if (storedName) {
+      setUserName(storedName);
+      return;
+    }
+
+    const storedId = window.localStorage.getItem(STORAGE_KEYS.userId);
+    if (!storedId) {
+      setUserName("");
+      return;
+    }
+
+    let ignore = false;
+
+    const fetchUserName = async () => {
+      try {
+        const profile = await getUserProfile(storedId);
+        if (ignore) return;
+        const name = profile.name ?? "";
+        setUserName(name);
+        if (name) {
+          window.localStorage.setItem(STORAGE_KEYS.userName, name);
+        }
+      } catch {
+        if (!ignore) {
+          setUserName("");
+        }
+      }
+    };
+
+    void fetchUserName();
+
+    return () => {
+      ignore = true;
+    };
+  }, [location.pathname]);
 
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
   const handleMenuItemClick = () => setIsMenuOpen(false);
@@ -57,6 +96,8 @@ const Header = () => {
 
   const handleLogout = () => {
     window.localStorage.removeItem(STORAGE_KEYS.userId);
+    window.localStorage.removeItem(STORAGE_KEYS.userName);
+    setUserName("");
     navigate("/");
   };
 
@@ -81,6 +122,8 @@ const Header = () => {
       await deleteUserAccount(storedId);
       alert("회원 탈퇴가 완료되었습니다.");
       window.localStorage.removeItem(STORAGE_KEYS.userId);
+      window.localStorage.removeItem(STORAGE_KEYS.userName);
+      setUserName("");
       closeWithdrawalModal();
       navigate("/");
     } catch (error) {
@@ -97,7 +140,7 @@ const Header = () => {
       <div className={s.topRow}>
         <section className={s.leftSection}>
           <div className={s.title}>마이페이지</div>
-          <p className={s.greet}>안녕하세요 ooo님</p>
+          <p className={s.greet}>안녕하세요 {userName}님</p>
         </section>
 
         <section className={s.rightSection}>

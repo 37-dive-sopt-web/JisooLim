@@ -33,6 +33,9 @@ const MyPage = () => {
         setIsLoading(true);
         const data = await getUserProfile(storedId);
         setProfile(data);
+        if (data.name) {
+          window.localStorage.setItem(STORAGE_KEYS.userName, data.name);
+        }
         setFormValues({
           name: data.name ?? "",
           email: data.email ?? "",
@@ -83,6 +86,9 @@ const MyPage = () => {
         email: updated.email ?? "",
         age: updated.age ? String(updated.age) : "",
       });
+      if (updated.name) {
+        window.localStorage.setItem(STORAGE_KEYS.userName, updated.name);
+      }
       alert("정보가 저장되었습니다.");
     } catch (error) {
       const message =
