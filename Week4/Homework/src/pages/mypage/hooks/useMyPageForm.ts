@@ -8,58 +8,19 @@ import {
 } from "@/api";
 import { STORAGE_KEYS } from "@/shared/constants/storage";
 import type { MyPageFieldName } from "../fields";
-
-const INITIAL_VALUES: Record<MyPageFieldName, string> = {
-  name: "",
-  email: "",
-  age: "",
-};
-
-const profileFormValues = (data: UserProfile | null) => {
-  if (!data) {
-    return { ...INITIAL_VALUES };
-  }
-  return {
-    name: data.name ?? "",
-    email: data.email ?? "",
-    age: data.age ? String(data.age) : "",
-  };
-};
-
-const getCachedProfile = () => {
-  if (typeof window === "undefined") return null;
-  const storedId = window.localStorage.getItem(STORAGE_KEYS.userId);
-  const cachedProfile = window.localStorage.getItem(STORAGE_KEYS.userProfile);
-  if (!storedId || !cachedProfile) return null;
-
-  try {
-    const parsed = JSON.parse(cachedProfile) as UserProfile;
-    if (String(parsed.id) !== storedId) {
-      return null;
-    }
-    return parsed;
-  } catch {
-    window.localStorage.removeItem(STORAGE_KEYS.userProfile);
-    return null;
-  }
-};
-
-const persistProfile = (data: UserProfile | null) => {
-  if (typeof window === "undefined") return;
-  if (!data) {
-    window.localStorage.removeItem(STORAGE_KEYS.userProfile);
-    return;
-  }
-  window.localStorage.setItem(STORAGE_KEYS.userProfile, JSON.stringify(data));
-};
+import {
+  clearProfileCache,
+  profileToFormValues,
+  readProfileCache,
+  writeProfileCache,
+} from "../utils/profileFormUtils";
 
 const useMyPageForm = () => {
   const navigate = useNavigate();
-  const [profile, setProfile] = useState<UserProfile | null>(() =>
-    getCachedProfile()
-  );
+  const initialProfile = readProfileCache();
+  const [profile, setProfile] = useState<UserProfile | null>(initialProfile);
   const [formValues, setFormValues] = useState<Record<MyPageFieldName, string>>(
-    () => profileFormValues(profile)
+    () => profileToFormValues(initialProfile),
   );
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -67,7 +28,7 @@ const useMyPageForm = () => {
   useEffect(() => {
     const storedId = window.localStorage.getItem(STORAGE_KEYS.userId);
     if (!storedId) {
-      persistProfile(null);
+      clearProfileCache();
       navigate("/");
       return;
     }
@@ -80,8 +41,8 @@ const useMyPageForm = () => {
         const data = await getUserProfile(storedId);
         if (ignore) return;
         setProfile(data);
-        setFormValues(profileFormValues(data));
-        persistProfile(data);
+        setFormValues(profileToFormValues(data));
+        writeProfileCache(data);
         if (data.name) {
           window.localStorage.setItem(STORAGE_KEYS.userName, data.name);
         }
@@ -157,8 +118,8 @@ const useMyPageForm = () => {
       setIsSaving(true);
       const updated = await updateUserProfile(profile.id, result.payload);
       setProfile(updated);
-      setFormValues(profileFormValues(updated));
-      persistProfile(updated);
+      setFormValues(profileToFormValues(updated));
+      writeProfileCache(updated);
       if (updated.name) {
         window.localStorage.setItem(STORAGE_KEYS.userName, updated.name);
       }
