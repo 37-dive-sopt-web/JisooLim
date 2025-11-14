@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ChangeEvent } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import { useNavigate } from "react-router";
 import {
   getUserProfile,
@@ -55,10 +55,11 @@ const persistProfile = (data: UserProfile | null) => {
 
 const useMyPageForm = () => {
   const navigate = useNavigate();
-  const cachedProfile = useMemo(() => getCachedProfile(), []);
-  const [profile, setProfile] = useState<UserProfile | null>(cachedProfile);
+  const [profile, setProfile] = useState<UserProfile | null>(() =>
+    getCachedProfile()
+  );
   const [formValues, setFormValues] = useState<Record<MyPageFieldName, string>>(
-    () => profileFormValues(cachedProfile)
+    () => profileFormValues(profile)
   );
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
