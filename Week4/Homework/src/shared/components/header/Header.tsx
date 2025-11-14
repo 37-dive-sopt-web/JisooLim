@@ -60,6 +60,7 @@ const Header = () => {
   const handleLogout = () => {
     window.localStorage.removeItem(STORAGE_KEYS.userId);
     window.localStorage.removeItem(STORAGE_KEYS.userName);
+    window.localStorage.removeItem(STORAGE_KEYS.userProfile);
     resetUserName();
     navigate("/");
   };
@@ -86,6 +87,7 @@ const Header = () => {
       alert("회원 탈퇴가 완료되었습니다.");
       window.localStorage.removeItem(STORAGE_KEYS.userId);
       window.localStorage.removeItem(STORAGE_KEYS.userName);
+      window.localStorage.removeItem(STORAGE_KEYS.userProfile);
       resetUserName();
       closeWithdrawalModal();
       navigate("/");

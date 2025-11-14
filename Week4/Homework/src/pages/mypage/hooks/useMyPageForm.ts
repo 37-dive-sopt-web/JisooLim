@@ -1,4 +1,4 @@
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useNavigate } from "react-router";
 import {
   getUserProfile,
@@ -15,11 +15,50 @@ const INITIAL_VALUES: Record<MyPageFieldName, string> = {
   age: "",
 };
 
+const profileFormValues = (data: UserProfile | null) => {
+  if (!data) {
+    return { ...INITIAL_VALUES };
+  }
+  return {
+    name: data.name ?? "",
+    email: data.email ?? "",
+    age: data.age ? String(data.age) : "",
+  };
+};
+
+const getCachedProfile = () => {
+  if (typeof window === "undefined") return null;
+  const storedId = window.localStorage.getItem(STORAGE_KEYS.userId);
+  const cachedProfile = window.localStorage.getItem(STORAGE_KEYS.userProfile);
+  if (!storedId || !cachedProfile) return null;
+
+  try {
+    const parsed = JSON.parse(cachedProfile) as UserProfile;
+    if (String(parsed.id) !== storedId) {
+      return null;
+    }
+    return parsed;
+  } catch {
+    window.localStorage.removeItem(STORAGE_KEYS.userProfile);
+    return null;
+  }
+};
+
+const persistProfile = (data: UserProfile | null) => {
+  if (typeof window === "undefined") return;
+  if (!data) {
+    window.localStorage.removeItem(STORAGE_KEYS.userProfile);
+    return;
+  }
+  window.localStorage.setItem(STORAGE_KEYS.userProfile, JSON.stringify(data));
+};
+
 const useMyPageForm = () => {
   const navigate = useNavigate();
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const cachedProfile = useMemo(() => getCachedProfile(), []);
+  const [profile, setProfile] = useState<UserProfile | null>(cachedProfile);
   const [formValues, setFormValues] = useState<Record<MyPageFieldName, string>>(
-    INITIAL_VALUES,
+    () => profileFormValues(cachedProfile)
   );
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -27,6 +66,7 @@ const useMyPageForm = () => {
   useEffect(() => {
     const storedId = window.localStorage.getItem(STORAGE_KEYS.userId);
     if (!storedId) {
+      persistProfile(null);
       navigate("/");
       return;
     }
@@ -39,11 +79,8 @@ const useMyPageForm = () => {
         const data = await getUserProfile(storedId);
         if (ignore) return;
         setProfile(data);
-        setFormValues({
-          name: data.name ?? "",
-          email: data.email ?? "",
-          age: data.age ? String(data.age) : "",
-        });
+        setFormValues(profileFormValues(data));
+        persistProfile(data);
         if (data.name) {
           window.localStorage.setItem(STORAGE_KEYS.userName, data.name);
         }
@@ -119,11 +156,8 @@ const useMyPageForm = () => {
       setIsSaving(true);
       const updated = await updateUserProfile(profile.id, result.payload);
       setProfile(updated);
-      setFormValues({
-        name: updated.name ?? "",
-        email: updated.email ?? "",
-        age: updated.age ? String(updated.age) : "",
-      });
+      setFormValues(profileFormValues(updated));
+      persistProfile(updated);
       if (updated.name) {
         window.localStorage.setItem(STORAGE_KEYS.userName, updated.name);
       }
