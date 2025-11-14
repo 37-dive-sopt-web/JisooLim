@@ -13,7 +13,7 @@ export const page = style({
 export const box = style({
   width: "100%",
   maxWidth: "32rem",
-  borderRadius: "1rem",
+  borderRadius: "10px",
   backgroundColor: colors.white01,
   padding: "2.5rem 2rem",
   display: "flex",

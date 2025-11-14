@@ -12,7 +12,7 @@ export const page = style({
 export const box = style({
   width: "100%",
   maxWidth: "32rem",
-  borderRadius: "1rem",
+  borderRadius: "10px",
   boxShadow: `0 0 5px ${colors.gray01}`,
   padding: "2.5rem 2rem",
   display: "flex",

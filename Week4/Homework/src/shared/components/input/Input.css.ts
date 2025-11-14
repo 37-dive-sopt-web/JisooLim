@@ -19,7 +19,7 @@ export const inputWrapper = style({
 
 export const input = style({
   width: "100%",
-  borderRadius: "0.5rem",
+  borderRadius: "5px",
   border: `0.1rem solid ${colors.blue02}`,
   padding: "0.6rem 1rem",
   fontSize: "1rem",

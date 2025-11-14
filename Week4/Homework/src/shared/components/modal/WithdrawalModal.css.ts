@@ -27,7 +27,7 @@ export const content = style({
   width: "100%",
   maxWidth: "24rem",
   backgroundColor: colors.white01,
-  borderRadius: "0.9rem",
+  borderRadius: "9px",
   padding: "1.5rem",
   boxShadow: "0 1rem 2.5rem rgba(0, 0, 0, 0.2)",
   display: "flex",

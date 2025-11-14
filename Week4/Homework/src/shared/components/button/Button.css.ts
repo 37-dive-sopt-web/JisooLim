@@ -3,7 +3,7 @@ import { colors } from "@/shared/styles/token";
 
 export const buttonContainer = style({
   border: "none",
-  borderRadius: "0.5rem",
+  borderRadius: "5px",
   fontWeight: 600,
   display: "inline-flex",
   alignItems: "center",
