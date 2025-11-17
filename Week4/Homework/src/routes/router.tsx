@@ -4,18 +4,19 @@ import SignupPage from "@/pages/signup/SignupPage";
 import MyPage from "@/pages/mypage/MyPage";
 import MembersPage from "@/pages/member/MembersPage";
 import Layout from "@/routes/Layout";
+import { ROUTES } from "@/shared/constants/routes";
 
 export const router = createBrowserRouter([
   {
-    path: "/",
+    path: ROUTES.login.path,
     element: <LoginPage />,
   },
   {
-    path: "/signup",
+    path: ROUTES.signup.path,
     element: <SignupPage />,
   },
   {
-    path: "/mypage",
+    path: ROUTES.myPage.path,
     element: <Layout />,
     children: [
       {
@@ -23,7 +24,7 @@ export const router = createBrowserRouter([
         element: <MyPage />,
       },
       {
-        path: "members",
+        path: ROUTES.myPage.children.members.path,
         element: <MembersPage />,
       },
     ],

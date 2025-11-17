@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { deleteUserAccount } from "@/api";
 import { STORAGE_KEYS } from "@/shared/constants/storage";
+import { ROUTES } from "@/shared/constants/routes";
 import IcMenubar from "@/assets/svgs/IcMenubar";
 import WithdrawalModal from "@/shared/components/modal/WithdrawalModal";
 import useHeaderUser from "./hooks/useHeaderUser";
@@ -30,14 +31,14 @@ const NAV_ITEMS: NavItem[] = [
     id: "profile",
     label: "내 정보",
     type: "link",
-    to: "/mypage",
+    to: ROUTES.myPage.path,
     exact: true,
   },
   {
     id: "members",
     label: "회원 조회",
     type: "link",
-    to: "/mypage/members",
+    to: ROUTES.myPage.children.members.fullPath,
     exact: true,
   },
   { id: "logout", label: "로그아웃", type: "button" },
@@ -62,7 +63,7 @@ const Header = () => {
     window.localStorage.removeItem(STORAGE_KEYS.userName);
     window.localStorage.removeItem(STORAGE_KEYS.userProfile);
     resetUserName();
-    navigate("/");
+    navigate(ROUTES.login.path);
   };
 
   const handleNavButtonClick = (itemId: NavAction) => {
@@ -90,7 +91,7 @@ const Header = () => {
       window.localStorage.removeItem(STORAGE_KEYS.userProfile);
       resetUserName();
       closeWithdrawalModal();
-      navigate("/");
+      navigate(ROUTES.login.path);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "회원 탈퇴에 실패했습니다.";

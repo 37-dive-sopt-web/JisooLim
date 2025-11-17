@@ -2,6 +2,7 @@ import { useState, type FormEvent, type ChangeEvent } from "react";
 import { Link, useNavigate } from "react-router";
 import { login } from "@/api";
 import { STORAGE_KEYS } from "@/shared/constants/storage";
+import { ROUTES } from "@/shared/constants/routes";
 import Button from "@/shared/components/button/Button";
 import Input from "@/shared/components/input/Input";
 import * as s from "./LoginPage.css";
@@ -40,7 +41,7 @@ const LoginPage = () => {
       }
 
       window.localStorage.setItem(STORAGE_KEYS.userId, String(userId));
-      navigate("/mypage");
+      navigate(ROUTES.myPage.path);
     } catch (error) {
       const message = error instanceof Error ? error.message : "로그인 실패 😞";
       alert(message);
@@ -62,7 +63,7 @@ const LoginPage = () => {
           ))}
           <Button text="로그인" type="submit" disabled={isDisabled} />
         </form>
-        <Link className={s.signup} to="/signup">
+        <Link className={s.signup} to={ROUTES.signup.path}>
           회원가입
         </Link>
       </section>

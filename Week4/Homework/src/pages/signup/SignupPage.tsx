@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router";
 import { signup } from "@/api";
 import Button from "@/shared/components/button/Button";
 import Input from "@/shared/components/input/Input";
+import { ROUTES } from "@/shared/constants/routes";
 import * as s from "./SignupPage.css";
 import useSignupForm from "./hooks/useSignupForm";
 
@@ -45,7 +46,7 @@ const SignupPage = () => {
       setIsSubmitting(true);
       await signup({ username, password, name, email, age: ageValue });
       alert(`${name}님 반갑습니다!`);
-      navigate("/");
+      navigate(ROUTES.login.path);
     } catch (error) {
       if (error instanceof Error && error.message === "이미 존재하는 사용자명입니다.") {
         alert(error.message);
@@ -97,7 +98,7 @@ const SignupPage = () => {
         </form>
         <p className={s.back}>
           이미 계정이 있나요?
-          <Link className={s.backLink} to="/">
+          <Link className={s.backLink} to={ROUTES.login.path}>
             {" "}
             로그인하러 가기
           </Link>

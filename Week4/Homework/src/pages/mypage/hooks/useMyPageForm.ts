@@ -7,6 +7,7 @@ import {
   type UpdateUserPayload,
 } from "@/api";
 import { STORAGE_KEYS } from "@/shared/constants/storage";
+import { ROUTES } from "@/shared/constants/routes";
 import type { MyPageFieldName } from "../fields";
 import {
   clearProfileCache,
@@ -29,7 +30,7 @@ const useMyPageForm = () => {
     const storedId = window.localStorage.getItem(STORAGE_KEYS.userId);
     if (!storedId) {
       clearProfileCache();
-      navigate("/");
+      navigate(ROUTES.login.path);
       return;
     }
 
