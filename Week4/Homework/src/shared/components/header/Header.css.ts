@@ -1,44 +1,47 @@
 import { style } from "@vanilla-extract/css";
-import { colors, typography } from "@/shared/styles/token";
+import { colors, layout, typography } from "@/shared/styles/token";
 
-export const header = style({
-  width: "100%",
-  padding: "1.6rem 2rem",
-  backgroundColor: colors.blue01,
-  display: "flex",
-  flexDirection: "column",
-  gap: 0,
-});
+export const header = style([
+  layout.flexColumn,
+  {
+    width: "100%",
+    padding: "1.6rem 2rem",
+    backgroundColor: colors.blue01,
+    gap: 0,
+  },
+]);
 
-export const topRow = style({
-  width: "100%",
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  gap: "1rem",
-});
+export const topRow = style([
+  layout.rowBetweenCenter,
+  {
+    width: "100%",
+    gap: "1rem",
+  },
+]);
 
-export const leftSection = style({
-  display: "flex",
-  flexDirection: "column",
-  gap: "0.4rem",
-  color: colors.white01,
-  flex: 1,
-});
+export const leftSection = style([
+  layout.flexColumn,
+  {
+    gap: "0.4rem",
+    color: colors.white01,
+    flex: 1,
+  },
+]);
 
 export const title = style([typography.headingM]);
 
-export const rightSection = style({
-  display: "flex",
-  alignItems: "center",
-  gap: "1.2rem",
-  color: colors.white01,
-  "@media": {
-    "(max-width: 768px)": {
-      display: "none",
+export const rightSection = style([
+  layout.rowCenter,
+  {
+    gap: "1.2rem",
+    color: colors.white01,
+    "@media": {
+      "(max-width: 768px)": {
+        display: "none",
+      },
     },
   },
-});
+]);
 
 export const linkText = style([
   typography.bodyBold,

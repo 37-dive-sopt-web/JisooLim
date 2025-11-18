@@ -27,11 +27,11 @@ export const fullWidth = style({
 
 export const sizeVariants = styleVariants({
   medium: {
-    fontSize: "1.1rem",
+    fontSize: typography.modalTitle.fontSize,
     padding: "0.6rem 1rem",
   },
   small: {
-    fontSize: "0.95rem",
+    fontSize: typography.label.fontSize,
     padding: "0.45rem 0.9rem",
   },
 });

@@ -1,24 +1,24 @@
 import { style } from "@vanilla-extract/css";
-import { colors, typography } from "@/shared/styles/token";
+import { colors, layout, typography } from "@/shared/styles/token";
 
-export const page = style({
-  minHeight: "100vh",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  padding: "1.6rem",
-});
+export const page = style([
+  layout.fullHeightCenter,
+  {
+    padding: "1.6rem",
+  },
+]);
 
-export const box = style({
-  width: "100%",
-  maxWidth: "32rem",
-  borderRadius: "10px",
-  boxShadow: `0 0 5px ${colors.gray01}`,
-  padding: "2.5rem 2rem",
-  display: "flex",
-  flexDirection: "column",
-  gap: "1.6rem",
-});
+export const box = style([
+  layout.flexColumn,
+  {
+    width: "100%",
+    maxWidth: "32rem",
+    borderRadius: "10px",
+    boxShadow: `0 0 5px ${colors.gray01}`,
+    padding: "2.5rem 2rem",
+    gap: "1.6rem",
+  },
+]);
 
 export const title = style([
   typography.headingXL,
@@ -28,14 +28,7 @@ export const title = style([
   },
 ]);
 
-export const infoRow = style([
-  typography.labelBold,
-  {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-]);
+export const infoRow = style([layout.rowBetweenCenter, typography.labelBold]);
 
 export const name = style([
   typography.subtitle,

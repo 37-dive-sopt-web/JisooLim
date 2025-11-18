@@ -1,5 +1,5 @@
 import { keyframes, style } from "@vanilla-extract/css";
-import { colors, typography, zIndex } from "@/shared/styles/token";
+import { colors, layout, typography, zIndex } from "@/shared/styles/token";
 
 const overlayFadeIn = keyframes({
   from: { opacity: 0 },
@@ -11,31 +11,32 @@ const modalSlideIn = keyframes({
   to: { opacity: 1, transform: "translateY(0)" },
 });
 
-export const overlay = style({
-  position: "fixed",
-  inset: 0,
-  backgroundColor: "rgba(0, 0, 0, 0.55)",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  padding: "0 1.5rem",
-  zIndex: zIndex.modal,
-  animation: `${overlayFadeIn} 0.2s ease`,
-});
+export const overlay = style([
+  layout.flexCenter,
+  {
+    position: "fixed",
+    inset: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.55)",
+    padding: "0 1.5rem",
+    zIndex: zIndex.modal,
+    animation: `${overlayFadeIn} 0.2s ease`,
+  },
+]);
 
-export const content = style({
-  width: "100%",
-  maxWidth: "24rem",
-  backgroundColor: colors.white01,
-  borderRadius: "9px",
-  padding: "1.5rem",
-  boxShadow: "0 1rem 2.5rem rgba(0, 0, 0, 0.2)",
-  display: "flex",
-  flexDirection: "column",
-  gap: "1rem",
-  textAlign: "center",
-  animation: `${modalSlideIn} 0.25s ease`,
-});
+export const content = style([
+  layout.flexColumn,
+  {
+    width: "100%",
+    maxWidth: "24rem",
+    backgroundColor: colors.white01,
+    borderRadius: "9px",
+    padding: "1.5rem",
+    boxShadow: "0 1rem 2.5rem rgba(0, 0, 0, 0.2)",
+    gap: "1rem",
+    textAlign: "center",
+    animation: `${modalSlideIn} 0.25s ease`,
+  },
+]);
 
 export const title = style({
   margin: 0,
@@ -53,11 +54,12 @@ export const description = style([
   },
 ]);
 
-export const actions = style({
-  display: "flex",
-  gap: "0.75rem",
-  justifyContent: "center",
-});
+export const actions = style([
+  layout.flexCenter,
+  {
+    gap: "0.75rem",
+  },
+]);
 
 export const actionButton = style({
   flex: 1,

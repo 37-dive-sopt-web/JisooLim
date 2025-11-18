@@ -1,11 +1,12 @@
 import { style } from "@vanilla-extract/css";
-import { colors, typography } from "@/shared/styles/token";
+import { colors, layout, typography } from "@/shared/styles/token";
 
-export const container = style({
-  display: "flex",
-  flexDirection: "column",
-  gap: "0.5rem",
-});
+export const container = style([
+  layout.flexColumn,
+  {
+    gap: "0.5rem",
+  },
+]);
 
 export const label = style([
   typography.labelBold,
