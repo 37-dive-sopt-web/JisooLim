@@ -1,22 +1,25 @@
 import { style, styleVariants } from "@vanilla-extract/css";
-import { colors } from "@/shared/styles/token";
+import { colors, typography } from "@/shared/styles/token";
 
-export const buttonContainer = style({
-  border: "none",
-  borderRadius: "5px",
-  fontWeight: 600,
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  cursor: "pointer",
-  transition: "background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease",
-  selectors: {
-    "&:disabled": {
-      opacity: 0.4,
-      cursor: "not-allowed",
+export const buttonContainer = style([
+  typography.bodyBold,
+  {
+    border: "none",
+    borderRadius: "5px",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    transition:
+      "background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease",
+    selectors: {
+      "&:disabled": {
+        opacity: 0.4,
+        cursor: "not-allowed",
+      },
     },
   },
-});
+]);
 
 export const fullWidth = style({
   width: "100%",

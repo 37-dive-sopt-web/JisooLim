@@ -1,5 +1,5 @@
 import { keyframes, style } from "@vanilla-extract/css";
-import { colors, zIndex } from "@/shared/styles/token";
+import { colors, typography, zIndex } from "@/shared/styles/token";
 
 const overlayFadeIn = keyframes({
   from: { opacity: 0 },
@@ -39,18 +39,19 @@ export const content = style({
 
 export const title = style({
   margin: 0,
-  fontSize: "1.15rem",
-  fontWeight: 700,
+  ...typography.modalTitle,
   color: colors.black01,
 });
 
-export const description = style({
-  margin: 0,
-  fontSize: "0.95rem",
-  color: colors.black01,
-  opacity: 0.8,
-  lineHeight: 1.4,
-});
+export const description = style([
+  typography.label,
+  {
+    margin: 0,
+    color: colors.black01,
+    opacity: 0.8,
+    lineHeight: 1.4,
+  },
+]);
 
 export const actions = style({
   display: "flex",

@@ -1,5 +1,5 @@
 import { style } from "@vanilla-extract/css";
-import { colors } from "@/shared/styles/token";
+import { colors, typography } from "@/shared/styles/token";
 
 export const header = style({
   width: "100%",
@@ -26,10 +26,7 @@ export const leftSection = style({
   flex: 1,
 });
 
-export const title = style({
-  fontSize: "1.5rem",
-  fontWeight: 700,
-});
+export const title = style([typography.headingM]);
 
 export const rightSection = style({
   display: "flex",
@@ -43,23 +40,24 @@ export const rightSection = style({
   },
 });
 
-export const linkText = style({
-  textDecoration: "none",
-  color: colors.white01,
-  fontWeight: 600,
-  transition: "color 0.2s ease",
-});
+export const linkText = style([
+  typography.bodyBold,
+  {
+    textDecoration: "none",
+    color: colors.white01,
+    transition: "color 0.2s ease",
+  },
+]);
 
 export const activeLink = style({
   color: colors.yellow01,
 });
 
-
 export const button = style({
   border: "none",
   backgroundColor: colors.blue01,
   color: colors.white01,
-  fontWeight: 600,
+  ...typography.bodyBold,
   cursor: "pointer",
 });
 
@@ -96,7 +94,8 @@ export const mobileMenu = style({
   maxHeight: 0,
   opacity: 0,
   transform: "translateY(-0.5rem)",
-  transition: "max-height 0.3s ease, opacity 0.3s ease, transform 0.3s ease, padding 0.3s ease",
+  transition:
+    "max-height 0.3s ease, opacity 0.3s ease, transform 0.3s ease, padding 0.3s ease",
   gap: "0.6rem",
   "@media": {
     "(max-width: 768px)": {
@@ -114,18 +113,20 @@ export const mobileMenuOpen = style({
   marginTop: "0.5rem",
 });
 
-export const mobileMenuItem = style({
-  width: "100%",
-  display: "block",
-  textDecoration: "none",
-  color: colors.white01,
-  fontWeight: 600,
-  background: "transparent",
-  border: "none",
-  padding: "0.5rem 0",
-  textAlign: "left",
-  cursor: "pointer",
-});
+export const mobileMenuItem = style([
+  typography.bodyBold,
+  {
+    width: "100%",
+    display: "block",
+    textDecoration: "none",
+    color: colors.white01,
+    background: "transparent",
+    border: "none",
+    padding: "0.5rem 0",
+    textAlign: "left",
+    cursor: "pointer",
+  },
+]);
 
 export const activeMobileLink = style({
   color: colors.yellow01,

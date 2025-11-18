@@ -1,5 +1,5 @@
 import { style } from "@vanilla-extract/css";
-import { colors } from "@/shared/styles/token";
+import { colors, typography } from "@/shared/styles/token";
 
 export const page = style({
   minHeight: "100vh",
@@ -20,23 +20,26 @@ export const box = style({
   gap: "1.6rem",
 });
 
-export const title = style({
-  fontSize: "2rem",
-  fontWeight: 700,
-  textAlign: "center",
-  color: colors.black01,
-});
+export const title = style([
+  typography.headingXL,
+  {
+    textAlign: "center",
+    color: colors.black01,
+  },
+]);
 
-export const infoRow = style({
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  fontSize: "0.95rem",
-  fontWeight: 600,
-});
+export const infoRow = style([
+  typography.labelBold,
+  {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+]);
 
-export const name = style({
-  fontSize: "1.3rem",
-  fontWeight: 600,
-  color: colors.black01,
-});
+export const name = style([
+  typography.subtitle,
+  {
+    color: colors.black01,
+  },
+]);

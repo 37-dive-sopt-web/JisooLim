@@ -1,5 +1,5 @@
 import { style } from "@vanilla-extract/css";
-import { colors } from "@/shared/styles/token";
+import { colors, typography } from "@/shared/styles/token";
 
 export const page = style({
   minHeight: "100vh",
@@ -20,12 +20,13 @@ export const box = style({
   gap: "1.6rem",
 });
 
-export const title = style({
-  fontSize: "2rem",
-  fontWeight: 700,
-  textAlign: "center",
-  color: colors.black01,
-});
+export const title = style([
+  typography.headingXL,
+  {
+    textAlign: "center",
+    color: colors.black01,
+  },
+]);
 
 export const form = style({
   display: "flex",
@@ -42,10 +43,11 @@ export const result = style({
   gap: "0.75rem",
 });
 
-export const resultRow = style({
-  display: "flex",
-  justifyContent: "space-between",
-  fontSize: "1rem",
-  color: colors.black01,
-  fontWeight: 600,
-});
+export const resultRow = style([
+  typography.bodyBold,
+  {
+    display: "flex",
+    justifyContent: "space-between",
+    color: colors.black01,
+  },
+]);

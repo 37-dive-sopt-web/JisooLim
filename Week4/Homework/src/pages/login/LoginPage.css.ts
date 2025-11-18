@@ -1,5 +1,5 @@
 import { style } from "@vanilla-extract/css";
-import { colors } from "@/shared/styles/token";
+import { colors, typography } from "@/shared/styles/token";
 
 export const page = style({
   minHeight: "100vh",
@@ -21,12 +21,13 @@ export const box = style({
   gap: "1.5rem",
 });
 
-export const title = style({
-  fontSize: "1.8rem",
-  fontWeight: 700,
-  textAlign: "center",
-  color: colors.black01,
-});
+export const title = style([
+  typography.headingL,
+  {
+    textAlign: "center",
+    color: colors.black01,
+  },
+]);
 
 export const form = style({
   display: "flex",
@@ -35,10 +36,11 @@ export const form = style({
   marginBottom: "1.3rem",
 });
 
-export const signup = style({
-  textAlign: "center",
-  color: colors.blue01,
-  fontWeight: 600,
-  textDecoration: "none",
-  fontSize: "1rem",
-});
+export const signup = style([
+  typography.bodyBold,
+  {
+    textAlign: "center",
+    color: colors.blue01,
+    textDecoration: "none",
+  },
+]);
