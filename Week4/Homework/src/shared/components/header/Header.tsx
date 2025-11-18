@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
-import { deleteUserAccount } from "@/api";
+import { ApiError, deleteUserAccount } from "@/api";
 import { STORAGE_KEYS } from "@/shared/constants/storage";
 import { ROUTES } from "@/shared/constants/routes";
 import IcMenubar from "@/assets/svgs/IcMenubar";
@@ -93,9 +93,13 @@ const Header = () => {
       closeWithdrawalModal();
       navigate(ROUTES.login.path);
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "회원 탈퇴에 실패했습니다.";
-      alert(message);
+      if (error instanceof ApiError) {
+        alert(error.message);
+      } else {
+        const message =
+          error instanceof Error ? error.message : "회원 탈퇴에 실패했습니다.";
+        alert(message);
+      }
     } finally {
       setIsWithdrawing(false);
     }

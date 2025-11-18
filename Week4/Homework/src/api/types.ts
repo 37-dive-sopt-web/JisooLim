@@ -9,5 +9,8 @@ export interface ApiErrorResponse {
   success: false;
   code: string;
   message: string;
-  data?: unknown;
+  data: {
+    code: string;
+    message: string;
+  };
 }

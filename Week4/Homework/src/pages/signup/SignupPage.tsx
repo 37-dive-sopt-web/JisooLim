@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
-import { signup } from "@/api";
+import { ApiError, signup } from "@/api";
 import Button from "@/shared/components/button/Button";
 import Input from "@/shared/components/input/Input";
 import { ROUTES } from "@/shared/constants/routes";
@@ -48,7 +48,7 @@ const SignupPage = () => {
       alert(`${name}님 반갑습니다!`);
       navigate(ROUTES.login.path);
     } catch (error) {
-      if (error instanceof Error && error.message === "이미 존재하는 사용자명입니다.") {
+      if (error instanceof ApiError) {
         alert(error.message);
       } else {
         alert("회원가입에 실패했어요.");

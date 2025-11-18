@@ -1,6 +1,7 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import { useNavigate } from "react-router";
 import {
+  ApiError,
   getUserProfile,
   updateUserProfile,
   type UserProfile,
@@ -49,11 +50,15 @@ const useMyPageForm = () => {
         }
       } catch (error) {
         if (!ignore) {
-          const message =
-            error instanceof Error
-              ? error.message
-              : "내 정보를 불러오지 못했어요.";
-          alert(message);
+          if (error instanceof ApiError) {
+            alert(error.message);
+          } else {
+            const message =
+              error instanceof Error
+                ? error.message
+                : "내 정보를 불러오지 못했어요.";
+            alert(message);
+          }
         }
       } finally {
         if (!ignore) {
@@ -126,9 +131,13 @@ const useMyPageForm = () => {
       }
       alert("정보가 저장되었습니다.");
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "정보 저장에 실패했습니다.";
-      alert(message);
+      if (error instanceof ApiError) {
+        alert(error.message);
+      } else {
+        const message =
+          error instanceof Error ? error.message : "정보 저장에 실패했습니다.";
+        alert(message);
+      }
     } finally {
       setIsSaving(false);
     }

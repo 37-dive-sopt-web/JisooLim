@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
-import { getUserProfile, type UserProfile } from "@/api";
+import { ApiError, getUserProfile, type UserProfile } from "@/api";
 
 const useMemberSearch = () => {
   const [memberId, setMemberId] = useState("");
@@ -27,9 +27,15 @@ const useMemberSearch = () => {
       setMember(data);
     } catch (error) {
       setMember(null);
-      const message =
-        error instanceof Error ? error.message : "회원 정보를 찾지 못했습니다.";
-      alert(message);
+      if (error instanceof ApiError) {
+        alert(error.message);
+      } else {
+        const message =
+          error instanceof Error
+            ? error.message
+            : "회원 정보를 찾지 못했습니다.";
+        alert(message);
+      }
     } finally {
       setIsLoading(false);
     }

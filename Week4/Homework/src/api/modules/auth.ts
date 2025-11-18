@@ -1,5 +1,5 @@
-import { httpClient } from "./httpClient";
-import type { ApiResponse } from "./types";
+import { httpClient } from "../client/httpClient";
+import type { ApiResponse } from "../types";
 
 const AUTH_BASE_PATH = "api/v1/auth";
 const USERS_BASE_PATH = "api/v1/users";
