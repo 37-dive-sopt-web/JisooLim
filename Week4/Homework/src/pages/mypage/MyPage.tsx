@@ -23,12 +23,12 @@ const MyPage = () => {
           <span>아이디</span>
           <div className={s.name}>{profile?.username}</div>
         </div>
-        {MYPAGE_FIELDS.map(({ emptyPlaceholder, ...field }) => (
+        {MYPAGE_FIELDS.map(({ placeholder, ...field }) => (
           <Input
             key={field.id}
             {...field}
             value={formValues[field.name]}
-            placeholder={getPlaceholder(field.name, emptyPlaceholder)}
+            placeholder={getPlaceholder(field.name, placeholder)}
             onChange={handleChange}
             disabled={isLoading || isSaving}
           />
