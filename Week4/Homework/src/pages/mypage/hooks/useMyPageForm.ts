@@ -9,6 +9,7 @@ import {
 import { STORAGE_KEYS } from "@/shared/constants/storage";
 import { ROUTES } from "@/shared/constants/routes";
 import useApiRequest from "@/shared/hooks/useApiRequest";
+import { USER_NAME_EVENT } from "@/shared/components/header/hooks/useHeaderUser";
 import type { MyPageFieldName } from "../fields";
 import {
   clearProfileCache,
@@ -49,13 +50,18 @@ const useMyPageForm = () => {
       try {
         setIsLoading(true);
         const data = await fetchMyProfile(storedId);
-        if (!data) return;
-        if (ignore) return;
+        if (ignore || !data) return;
         setProfile(data);
         setFormValues(profileToFormValues(data));
         writeProfileCache(data);
         if (data.name) {
           window.localStorage.setItem(STORAGE_KEYS.userName, data.name);
+        }
+      } catch (error) {
+        if (!ignore) {
+          const message =
+            error instanceof Error ? error.message : "내 정보를 불러오지 못했어요.";
+          alert(message);
         }
       } finally {
         if (!ignore) {
@@ -123,9 +129,13 @@ const useMyPageForm = () => {
       setProfile(updated);
       setFormValues(profileToFormValues(updated));
       writeProfileCache(updated);
-      if (updated.name) {
-        window.localStorage.setItem(STORAGE_KEYS.userName, updated.name);
+      const nextName = updated.name ?? "";
+      if (nextName) {
+        window.localStorage.setItem(STORAGE_KEYS.userName, nextName);
       }
+      window.dispatchEvent(
+        new CustomEvent(USER_NAME_EVENT, { detail: nextName })
+      );
       alert("정보가 저장되었습니다.");
     } catch (error) {
       const message =

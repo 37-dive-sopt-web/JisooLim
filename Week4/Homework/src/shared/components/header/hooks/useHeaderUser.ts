@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { getUserProfile } from "@/api";
 import { STORAGE_KEYS } from "@/shared/constants/storage";
 
+export const USER_NAME_EVENT = "user-name-updated";
+
 const useHeaderUser = () => {
   const [userName, setUserName] = useState("");
 
@@ -40,6 +42,21 @@ const useHeaderUser = () => {
 
     return () => {
       ignore = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleNameUpdate = (event: Event) => {
+      const { detail } = event as CustomEvent<string | undefined>;
+      setUserName(detail ?? "");
+    };
+
+    window.addEventListener(USER_NAME_EVENT, handleNameUpdate as EventListener);
+    return () => {
+      window.removeEventListener(
+        USER_NAME_EVENT,
+        handleNameUpdate as EventListener
+      );
     };
   }, []);
 
