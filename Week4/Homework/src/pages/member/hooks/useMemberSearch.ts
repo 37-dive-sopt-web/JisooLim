@@ -1,5 +1,6 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
-import { ApiError, getUserProfile, type UserProfile } from "@/api";
+import { getUserProfile, type UserProfile } from "@/api";
+import useApiRequest from "@/shared/hooks/useApiRequest";
 
 const useMemberSearch = () => {
   const [memberId, setMemberId] = useState("");
@@ -13,6 +14,10 @@ const useMemberSearch = () => {
     setMemberId(value);
   };
 
+  const { execute: fetchMember } = useApiRequest(getUserProfile, {
+    defaultErrorMessage: "회원 정보를 찾지 못했습니다.",
+  });
+
   const searchMember = async () => {
     const trimmed = memberId.trim();
     if (!trimmed) return;
@@ -23,19 +28,13 @@ const useMemberSearch = () => {
     }
     try {
       setIsLoading(true);
-      const data = await getUserProfile(numericId);
+      const data = await fetchMember(numericId);
       setMember(data);
     } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "회원 정보를 찾지 못했습니다.";
+      alert(message);
       setMember(null);
-      if (error instanceof ApiError) {
-        alert(error.message);
-      } else {
-        const message =
-          error instanceof Error
-            ? error.message
-            : "회원 정보를 찾지 못했습니다.";
-        alert(message);
-      }
     } finally {
       setIsLoading(false);
     }

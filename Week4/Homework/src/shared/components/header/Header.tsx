@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
-import { ApiError, deleteUserAccount } from "@/api";
+import { deleteUserAccount } from "@/api";
 import { STORAGE_KEYS } from "@/shared/constants/storage";
 import { ROUTES } from "@/shared/constants/routes";
+import useApiRequest from "@/shared/hooks/useApiRequest";
 import IcMenubar from "@/assets/svgs/IcMenubar";
 import WithdrawalModal from "@/shared/components/modal/WithdrawalModal";
 import useHeaderUser from "./hooks/useHeaderUser";
@@ -58,6 +59,10 @@ const Header = () => {
   const openWithdrawalModal = () => setIsWithdrawalModalOpen(true);
   const closeWithdrawalModal = () => setIsWithdrawalModalOpen(false);
 
+  const { execute: withdrawUser } = useApiRequest(deleteUserAccount, {
+    defaultErrorMessage: "회원 탈퇴에 실패했습니다.",
+  });
+
   const handleLogout = () => {
     window.localStorage.removeItem(STORAGE_KEYS.userId);
     window.localStorage.removeItem(STORAGE_KEYS.userName);
@@ -84,7 +89,7 @@ const Header = () => {
     }
     try {
       setIsWithdrawing(true);
-      await deleteUserAccount(storedId);
+      await withdrawUser(storedId);
       alert("회원 탈퇴가 완료되었습니다.");
       window.localStorage.removeItem(STORAGE_KEYS.userId);
       window.localStorage.removeItem(STORAGE_KEYS.userName);
@@ -93,13 +98,9 @@ const Header = () => {
       closeWithdrawalModal();
       navigate(ROUTES.login.path);
     } catch (error) {
-      if (error instanceof ApiError) {
-        alert(error.message);
-      } else {
-        const message =
-          error instanceof Error ? error.message : "회원 탈퇴에 실패했습니다.";
-        alert(message);
-      }
+      const message =
+        error instanceof Error ? error.message : "회원 탈퇴에 실패했습니다.";
+      alert(message);
     } finally {
       setIsWithdrawing(false);
     }

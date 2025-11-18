@@ -1,7 +1,6 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import { useNavigate } from "react-router";
 import {
-  ApiError,
   getUserProfile,
   updateUserProfile,
   type UserProfile,
@@ -9,6 +8,7 @@ import {
 } from "@/api";
 import { STORAGE_KEYS } from "@/shared/constants/storage";
 import { ROUTES } from "@/shared/constants/routes";
+import useApiRequest from "@/shared/hooks/useApiRequest";
 import type { MyPageFieldName } from "../fields";
 import {
   clearProfileCache,
@@ -22,10 +22,18 @@ const useMyPageForm = () => {
   const initialProfile = readProfileCache();
   const [profile, setProfile] = useState<UserProfile | null>(initialProfile);
   const [formValues, setFormValues] = useState<Record<MyPageFieldName, string>>(
-    () => profileToFormValues(initialProfile),
+    () => profileToFormValues(initialProfile)
   );
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+
+  const { execute: fetchMyProfile } = useApiRequest(getUserProfile, {
+    defaultErrorMessage: "내 정보를 불러오지 못했어요.",
+  });
+
+  const { execute: saveProfile } = useApiRequest(updateUserProfile, {
+    defaultErrorMessage: "정보 저장에 실패했습니다.",
+  });
 
   useEffect(() => {
     const storedId = window.localStorage.getItem(STORAGE_KEYS.userId);
@@ -40,25 +48,14 @@ const useMyPageForm = () => {
     const fetchProfile = async () => {
       try {
         setIsLoading(true);
-        const data = await getUserProfile(storedId);
+        const data = await fetchMyProfile(storedId);
+        if (!data) return;
         if (ignore) return;
         setProfile(data);
         setFormValues(profileToFormValues(data));
         writeProfileCache(data);
         if (data.name) {
           window.localStorage.setItem(STORAGE_KEYS.userName, data.name);
-        }
-      } catch (error) {
-        if (!ignore) {
-          if (error instanceof ApiError) {
-            alert(error.message);
-          } else {
-            const message =
-              error instanceof Error
-                ? error.message
-                : "내 정보를 불러오지 못했어요.";
-            alert(message);
-          }
         }
       } finally {
         if (!ignore) {
@@ -72,7 +69,7 @@ const useMyPageForm = () => {
     return () => {
       ignore = true;
     };
-  }, [navigate]);
+  }, [fetchMyProfile, navigate]);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -122,7 +119,7 @@ const useMyPageForm = () => {
 
     try {
       setIsSaving(true);
-      const updated = await updateUserProfile(profile.id, result.payload);
+      const updated = await saveProfile(profile.id, result.payload);
       setProfile(updated);
       setFormValues(profileToFormValues(updated));
       writeProfileCache(updated);
@@ -131,13 +128,9 @@ const useMyPageForm = () => {
       }
       alert("정보가 저장되었습니다.");
     } catch (error) {
-      if (error instanceof ApiError) {
-        alert(error.message);
-      } else {
-        const message =
-          error instanceof Error ? error.message : "정보 저장에 실패했습니다.";
-        alert(message);
-      }
+      const message =
+        error instanceof Error ? error.message : "정보 저장에 실패했습니다.";
+      alert(message);
     } finally {
       setIsSaving(false);
     }

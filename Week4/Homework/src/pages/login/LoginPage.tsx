@@ -1,8 +1,9 @@
 import { useState, type FormEvent, type ChangeEvent } from "react";
 import { Link, useNavigate } from "react-router";
-import { ApiError, login } from "@/api";
+import { login } from "@/api";
 import { STORAGE_KEYS } from "@/shared/constants/storage";
 import { ROUTES } from "@/shared/constants/routes";
+import useApiRequest from "@/shared/hooks/useApiRequest";
 import Button from "@/shared/components/button/Button";
 import Input from "@/shared/components/input/Input";
 import * as s from "./LoginPage.css";
@@ -31,22 +32,23 @@ const LoginPage = () => {
     }));
   };
 
+  const { execute: submitLogin } = useApiRequest(login, {
+    defaultErrorMessage: "로그인 실패 😞",
+  });
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const { userId } = await login(formValues);
+      const { userId } = await submitLogin(formValues);
 
       if (typeof userId !== "number") {
-        throw new Error("사용자 정보를 불러오지 못했어요");
+        alert("사용자 정보를 불러오지 못했어요");
+        return;
       }
 
       window.localStorage.setItem(STORAGE_KEYS.userId, String(userId));
       navigate(ROUTES.myPage.path);
     } catch (error) {
-      if (error instanceof ApiError) {
-        alert(error.message);
-        return;
-      }
       const message = error instanceof Error ? error.message : "로그인 실패 😞";
       alert(message);
     }

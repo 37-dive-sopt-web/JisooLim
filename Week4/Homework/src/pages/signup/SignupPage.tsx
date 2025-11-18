@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
-import { ApiError, signup } from "@/api";
+import { signup } from "@/api";
 import Button from "@/shared/components/button/Button";
 import Input from "@/shared/components/input/Input";
 import { ROUTES } from "@/shared/constants/routes";
+import useApiRequest from "@/shared/hooks/useApiRequest";
 import * as s from "./SignupPage.css";
 import useSignupForm from "./hooks/useSignupForm";
 
@@ -20,6 +21,10 @@ const SignupPage = () => {
     fields,
     formValues,
   } = useSignupForm();
+
+  const { execute: submitSignup } = useApiRequest(signup, {
+    defaultErrorMessage: "회원가입에 실패했어요.",
+  });
 
   const handleSignup = async () => {
     if (isSubmitting) return;
@@ -44,15 +49,12 @@ const SignupPage = () => {
 
     try {
       setIsSubmitting(true);
-      await signup({ username, password, name, email, age: ageValue });
+      await submitSignup({ username, password, name, email, age: ageValue });
       alert(`${name}님 반갑습니다!`);
       navigate(ROUTES.login.path);
     } catch (error) {
-      if (error instanceof ApiError) {
-        alert(error.message);
-      } else {
-        alert("회원가입에 실패했어요.");
-      }
+      const message = error instanceof Error ? error.message : "회원가입에 실패했어요.";
+      alert(message);
     } finally {
       setIsSubmitting(false);
     }
