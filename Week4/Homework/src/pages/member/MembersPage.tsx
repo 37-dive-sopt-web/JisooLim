@@ -1,6 +1,6 @@
 import Button from "@/shared/components/button/Button";
 import Input from "@/shared/components/input/Input";
-import { MEMBER_RESULT_FIELDS } from "./fields";
+import { MEMBER_FIELDS } from "./fields";
 import useMemberSearch from "./hooks/useMemberSearch";
 import * as s from "./MembersPage.css";
 
@@ -34,7 +34,7 @@ const MembersPage = () => {
 
         {member && (
           <dl className={s.result}>
-            {MEMBER_RESULT_FIELDS.map(({ label, key }) => (
+            {MEMBER_FIELDS.map(({ label, key }) => (
               <div className={s.resultRow} key={key as string}>
                 <dt>{label}</dt>
                 <dd>{member[key]}</dd>

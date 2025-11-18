@@ -1,6 +1,6 @@
 import type { UserProfile } from "@/api";
 
-export const MEMBER_RESULT_FIELDS: Array<{
+export const MEMBER_FIELDS: Array<{
   label: string;
   key: keyof Pick<UserProfile, "name" | "username" | "email" | "age">;
 }> = [
